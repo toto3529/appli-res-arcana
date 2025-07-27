@@ -36,7 +36,7 @@ export default function HomeScreen({ navigation }: Props) {
         text: "Supprimer",
         style: "destructive",
         onPress: () => {
-          LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut)
+          //LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut)
           deleteGame(id)
         },
       },
@@ -58,9 +58,14 @@ export default function HomeScreen({ navigation }: Props) {
         <SwipeListView
           ref={listRef}
           data={data}
-          contentContainerStyle={{ paddingBottom: 100 }}
+          bounces={false}
+          keyExtractor={(item) => item.key}
+          //initialNumToRender={10}
           leftOpenValue={80}
           rightOpenValue={-80}
+          contentContainerStyle={{ paddingBottom: 100 }}
+          //removeClippedSubviews={false}
+
           onRowOpen={(rowKey, rowMap) => {
             if (openRowRef.current && openRowRef.current !== rowMap[rowKey]) {
               openRowRef.current.closeRow()
@@ -88,7 +93,7 @@ export default function HomeScreen({ navigation }: Props) {
             const playerB = "Lulu"
 
             return (
-              <TouchableOpacity style={styles.rowFront} activeOpacity={0.7}>
+              <TouchableOpacity style={styles.rowFront} activeOpacity={1}>
                 <View style={styles.rowContent}>
                   {/* Joueur A (à gauche) */}
                   <View style={styles.playerBox}>
