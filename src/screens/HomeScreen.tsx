@@ -36,7 +36,7 @@ export default function HomeScreen({ navigation }: Props) {
         text: "Supprimer",
         style: "destructive",
         onPress: () => {
-          //LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut)
+          LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut)
           deleteGame(id)
         },
       },
@@ -88,20 +88,27 @@ export default function HomeScreen({ navigation }: Props) {
           // }}
 
           renderItem={({ item }) => {
-            const winA = item.scoreA > item.scoreB
-            const playerA = "Toto" // 🔁 Tu pourras remplacer dynamiquement plus tard
-            const playerB = "Lulu"
+            let winA: boolean | null = item.scoreA > item.scoreB
+            const draw = item.scoreA === item.scoreB
 
+            if (draw && item.winnerOnTie === "A") winA = true
+            else if (draw && item.winnerOnTie === "B") winA = false
+            else if (draw && item.winnerOnTie === "equal") winA = null
+
+            const playerA = "Toto"
+            const playerB = "Lulu"
             return (
               <TouchableOpacity style={styles.rowFront} activeOpacity={1}>
                 <View style={styles.rowContent}>
-                  {/* Joueur A (à gauche) */}
+                  {/* Joueur A */}
                   <View style={styles.playerBox}>
                     <Text style={styles.playerName}>{playerA}</Text>
-                    <Text style={[styles.status, winA ? styles.win : styles.loss]}>{winA ? "Victory ✅" : "Defeat ❌"}</Text>
+                    <Text style={[styles.status, winA === true ? styles.win : winA === false ? styles.loss : styles.draw]}>
+                      {winA === true ? "Victory ✅" : winA === false ? "Defeat ❌" : "Draw 🤝"}
+                    </Text>
                   </View>
 
-                  {/* Score centré */}
+                  {/* Score */}
                   <View style={styles.scoreBox}>
                     <Text style={styles.scoreText}>
                       {item.scoreA} – {item.scoreB}
@@ -109,10 +116,12 @@ export default function HomeScreen({ navigation }: Props) {
                     <Text style={styles.dateText}>{format(item.date, "dd/MM/yyyy")}</Text>
                   </View>
 
-                  {/* Joueur B (à droite) */}
+                  {/* Joueur B */}
                   <View style={styles.playerBox}>
                     <Text style={styles.playerName}>{playerB}</Text>
-                    <Text style={[styles.status, !winA ? styles.win : styles.loss]}>{!winA ? "Victory ✅" : "Defeat ❌"}</Text>
+                    <Text style={[styles.status, winA === false ? styles.win : winA === true ? styles.loss : styles.draw]}>
+                      {winA === false ? "Victory ✅" : winA === true ? "Defeat ❌" : "Draw 🤝"}
+                    </Text>
                   </View>
                 </View>
               </TouchableOpacity>
@@ -160,6 +169,9 @@ const styles = StyleSheet.create({
   listWrapper: {
     flex: 1,
     overflow: "hidden",
+  },
+  draw: {
+    color: "#888", // gris
   },
   rowFront: {
     marginHorizontal: 16,

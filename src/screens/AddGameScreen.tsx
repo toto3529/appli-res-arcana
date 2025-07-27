@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { View, Text, TextInput, Button, TouchableOpacity, StyleSheet, Platform, Alert } from "react-native"
+import { View, Text, TextInput, Button, TouchableOpacity, StyleSheet, Platform, Alert, Modal } from "react-native"
 import DateTimePicker from "@react-native-community/datetimepicker"
 import { usePlayerStore } from "src/store/playerStore"
 import { useGameStore } from "src/store/gameStore"
@@ -25,6 +25,8 @@ export default function AddGameScreen({ navigation }: Props) {
   // scoreA / scoreB : saisies utilisateurs (chaînes, pour TextInput)
   const [scoreA, setScoreA] = useState<string>("")
   const [scoreB, setScoreB] = useState<string>("")
+  const [isModalVisible, setIsModalVisible] = useState(false)
+  const [winnerOnTie, setWinnerOnTie] = useState<"A" | "B" | "equal" | null>(null)
 
   /**
    * onChangeDate :
@@ -57,9 +59,21 @@ export default function AddGameScreen({ navigation }: Props) {
       return
     }
 
+    // Egalité des scores
+    if (scoreA === scoreB && winnerOnTie === null) {
+      // Égalité, mais pas encore de choix sur les essences
+      setIsModalVisible(true)
+      return
+    }
+
     try {
       // Appel au store (Zustand + WatermelonDB)
-      await addGame({ date, scoreA: a, scoreB: b })
+      await addGame({
+        date,
+        scoreA: a,
+        scoreB: b,
+        winnerOnTie: a === b ? winnerOnTie : null,
+      })
       navigation.goBack() // revient à l'écran précédent
     } catch (error) {
       console.error("Erreur ajout partie :", error)
@@ -101,6 +115,44 @@ export default function AddGameScreen({ navigation }: Props) {
       <View style={styles.buttonWrapper}>
         <Button title="Annuler" onPress={handleCancel} />
       </View>
+      <Modal visible={isModalVisible} transparent animationType="slide">
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
+            <Text style={styles.modalTitle}>Qui a le plus d'essences ?</Text>
+            {/* Options de sélection */}
+            {["A", "B", "equal"].map((value) => {
+              const label = value === "A" ? "Joueur A" : value === "B" ? "Joueur B" : "Égalité parfaite"
+              const selected = winnerOnTie === value
+              return (
+                <TouchableOpacity
+                  key={value}
+                  onPress={() => setWinnerOnTie(value as "A" | "B" | "equal")}
+                  style={[styles.modalOption, selected && styles.modalOptionSelected]}
+                >
+                  <Text style={selected ? styles.modalOptionTextSelected : styles.modalOptionText}>{label}</Text>
+                </TouchableOpacity>
+              )
+            })}
+
+            {/* Boutons de validation */}
+            <View style={styles.modalActions}>
+              <TouchableOpacity style={styles.cancelButton} onPress={() => setIsModalVisible(false)}>
+                <Text style={styles.cancelText}>Annuler</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.okButton, { opacity: winnerOnTie === null ? 0.5 : 1 }]}
+                onPress={() => {
+                  setIsModalVisible(false)
+                  handleSubmit()
+                }}
+                disabled={winnerOnTie === null}
+              >
+                <Text style={styles.okText}>OK</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   )
 }
@@ -134,5 +186,89 @@ const styles = StyleSheet.create({
   },
   buttonWrapper: {
     marginTop: 12,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalContainer: {
+    backgroundColor: "white",
+    padding: 24,
+    borderRadius: 8,
+    width: "80%",
+    alignItems: "center",
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 16,
+  },
+  modalButton: {
+    fontSize: 16,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    marginVertical: 6,
+    backgroundColor: "#eee",
+    borderRadius: 4,
+    width: "100%",
+    textAlign: "center",
+  },
+
+  modalOption: {
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    backgroundColor: "#eee",
+    borderRadius: 4,
+    marginVertical: 6,
+    width: "100%",
+    alignItems: "center",
+  },
+
+  modalOptionSelected: {
+    backgroundColor: "#007BFF",
+  },
+
+  modalOptionText: {
+    fontSize: 16,
+    color: "#333",
+  },
+
+  modalOptionTextSelected: {
+    fontSize: 16,
+    color: "#fff",
+    fontWeight: "bold",
+  },
+
+  modalActions: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 16,
+    width: "100%",
+  },
+
+  cancelButton: {
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    backgroundColor: "#ccc",
+    borderRadius: 4,
+  },
+
+  cancelText: {
+    color: "#333",
+    fontWeight: "bold",
+  },
+
+  okButton: {
+    paddingVertical: 10,
+    paddingHorizontal: 32,
+    backgroundColor: "#007BFF",
+    borderRadius: 4,
+  },
+
+  okText: {
+    color: "#fff",
+    fontWeight: "bold",
   },
 })

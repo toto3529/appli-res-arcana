@@ -1,5 +1,3 @@
-// src/db/migrations.ts
-
 import { schemaMigrations } from "@nozbe/watermelondb/Schema/migrations"
 
 export const migrations = schemaMigrations({

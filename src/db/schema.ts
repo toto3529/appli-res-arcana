@@ -10,6 +10,7 @@ export const mySchema = appSchema({
         { name: "date", type: "number" }, // stockera timestamp (ms)
         { name: "scoreA", type: "number" },
         { name: "scoreB", type: "number" },
+        { name: "winner_on_tie", type: "string", isOptional: true },
       ],
     }),
   ],

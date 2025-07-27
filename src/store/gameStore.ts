@@ -8,14 +8,15 @@ export interface Game {
   date: Date
   scoreA: number
   scoreB: number
+  winnerOnTie?: "A" | "B" | "equal" | null
 }
 
 // Définition du shape du store
 interface GameState {
   games: Game[]
   loadGames: () => Promise<void>
-  addGame: (g: Omit<Game, "id">) => Promise<void>
-  updateGame: (id: string, newA: number, newB: number) => Promise<void>
+  addGame: (game: Omit<Game, "id">) => Promise<void>
+  updateGame: (id: string, newA: number, newB: number, winnerOnTie?: "A" | "B" | "equal" | null) => Promise<void>
   deleteGame: (id: string) => Promise<void>
 }
 
@@ -28,13 +29,13 @@ export const useGameStore = create<GameState>((set, get) => ({
   loadGames: async () => {
     // On récupère la collection 'games' et on fetch tous les enregistrements
     const raws = await database.get<GameModel>("games").query().fetch()
-    //console.log("🎲 raw games from DB:", raws)
     // On transforme les modèles WatermelonDB en objets JS simples
-    const mapped = raws.map((g) => ({
-      id: g.id,
-      date: g.date,
-      scoreA: g.scoreA,
-      scoreB: g.scoreB,
+    const mapped = raws.map((game) => ({
+      id: game.id,
+      date: game.date,
+      scoreA: game.scoreA,
+      scoreB: game.scoreB,
+      winnerOnTie: game.winnerOnTie ?? null,
     }))
 
     // On met à jour le state local
@@ -42,14 +43,15 @@ export const useGameStore = create<GameState>((set, get) => ({
   },
 
   // Créé une nouvelle partie et recharge la liste
-  addGame: async ({ date, scoreA, scoreB }) => {
+  addGame: async ({ date, scoreA, scoreB, winnerOnTie }) => {
     // On ouvre une transaction WatermelonDB
     await database.write(async () => {
       // On crée un nouvel enregistrement dans la collection 'games'
-      await database.get<GameModel>("games").create((g) => {
-        g.date = date
-        g.scoreA = scoreA
-        g.scoreB = scoreB
+      await database.get<GameModel>("games").create((game) => {
+        game.date = date
+        game.scoreA = scoreA
+        game.scoreB = scoreB
+        game.winnerOnTie = winnerOnTie ?? null
       })
     })
     // On recharge la liste pour rafraîchir l’écran
@@ -57,12 +59,16 @@ export const useGameStore = create<GameState>((set, get) => ({
   },
 
   // Met à jour une partie existante
-  updateGame: async (id, newA, newB) => {
+  updateGame: async (id, newA, newB, winnerOnTie = null) => {
     await database.write(async () => {
       // On trouve l’enregistrement par son id
       const record = await database.get<GameModel>("games").find(id)
       // On appelle la méthode custom writer définie dans ton modèle
-      await (record as any).updateScores(newA, newB)
+      await record.update((g) => {
+        g.scoreA = newA
+        g.scoreB = newB
+        g.winnerOnTie = winnerOnTie
+      })
     })
     // On recharge la liste pour rafraîchir l’écran
     await get().loadGames()
