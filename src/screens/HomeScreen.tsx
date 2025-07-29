@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, Button, Alert, StyleSheet, LayoutAnimatio
 import { useFocusEffect } from "@react-navigation/native"
 import { SwipeListView, SwipeRow } from "react-native-swipe-list-view"
 import { format } from "date-fns"
-import { useGameStore } from "src/store/gameStore"
+import { useGameStore } from "@stores/gameStore"
 import { NativeStackScreenProps } from "@react-navigation/native-stack"
 import { RootStackParamList } from "src/navigation/types"
 

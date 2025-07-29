@@ -1,7 +1,7 @@
 import { Database } from "@nozbe/watermelondb"
 import SQLiteAdapter from "@nozbe/watermelondb/adapters/sqlite"
 import { mySchema } from "./schema"
-import Game from "../models/Game"
+import Game from "../models/GameModel"
 import { migrations } from "./migrations"
 
 // On crée l’adapter SQLite avec schéma et migrations

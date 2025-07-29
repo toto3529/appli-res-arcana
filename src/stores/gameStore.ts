@@ -1,6 +1,6 @@
 import { database } from "src/db/database"
 import { create } from "zustand"
-import GameModel from "../models/Game"
+import GameModel from "../models/GameModel"
 
 // Interface exposée aux composants : on ne stocke que les champs utiles
 export interface Game {

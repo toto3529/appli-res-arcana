@@ -1,8 +1,8 @@
 import { useState } from "react"
 import { View, Text, TextInput, Button, TouchableOpacity, StyleSheet, Platform, Alert, Modal } from "react-native"
 import DateTimePicker from "@react-native-community/datetimepicker"
-import { usePlayerStore } from "src/store/playerStore"
-import { useGameStore } from "src/store/gameStore"
+import { usePlayerStore } from "@stores/playerStore"
+import { useGameStore } from "@stores/gameStore"
 import { NativeStackScreenProps } from "@react-navigation/native-stack"
 import { RootStackParamList } from "src/navigation/types"
 

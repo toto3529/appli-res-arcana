@@ -1,7 +1,7 @@
 import { Model } from "@nozbe/watermelondb"
 import { field, date, writer } from "@nozbe/watermelondb/decorators"
 
-export default class Game extends Model {
+export default class GameModel extends Model {
   static table = "games"
 
   @date("date") date!: Date

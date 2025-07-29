@@ -4,13 +4,13 @@ import DateTimePicker from "@react-native-community/datetimepicker"
 import { NativeStackScreenProps } from "@react-navigation/native-stack"
 import { RootStackParamList } from "src/navigation/types"
 import { database } from "src/db/database"
-import Game from "src/models/Game.ts"
+import GameModel from "src/models/GameModel"
 
 type Props = NativeStackScreenProps<RootStackParamList, "EditGame">
 
 export default function EditGameScreen({ route, navigation }: Props) {
   const { id } = route.params
-  const [game, setGame] = useState<Game | null>(null)
+  const [game, setGame] = useState<GameModel | null>(null)
   const [date, setDate] = useState(new Date())
   const [scoreA, setScoreA] = useState("")
   const [scoreB, setScoreB] = useState("")
@@ -20,7 +20,7 @@ export default function EditGameScreen({ route, navigation }: Props) {
 
   useEffect(() => {
     const load = async () => {
-      const collection = database.get<Game>("games")
+      const collection = database.get<GameModel>("games")
       const found = await collection.find(id)
       setGame(found)
       setDate(found.date)
