@@ -1,7 +1,8 @@
-import { calculateMonthlyStats, getFilteredGamesByMonth, getMonthLabel } from "@utils/statsHelpers"
+import { calculateMonthlyStats, getCurrentWinStreak, getFilteredGamesByMonth, getMonthLabel } from "@utils/statsHelpers"
 import { useMemo, useState } from "react"
 import { View, Text, TouchableOpacity, ActivityIndicator, StyleSheet } from "react-native"
 import { Game } from "src/stores/gameStore"
+import { sharedStyles } from "./StatsScreen.styles"
 
 interface Props {
   games: Game[]
@@ -18,13 +19,14 @@ const MonthlyStats = ({ games }: Props) => {
 
   const filteredGames = useMemo(() => getFilteredGamesByMonth(games, currentDate), [games, currentDate])
   const stats = useMemo(() => calculateMonthlyStats(filteredGames), [filteredGames])
+  const currentStreak = useMemo(() => getCurrentWinStreak(filteredGames), [filteredGames])
   const isLoading = false
 
   const handlePrevMonth = () => setCurrentMonthOffset((prev) => prev - 1)
   const handleNextMonth = () => setCurrentMonthOffset((prev) => prev + 1)
 
   return (
-    <View style={styles.container}>
+    <View style={sharedStyles.container}>
       {/* Sélection du mois */}
       <View style={styles.monthSelector}>
         <TouchableOpacity onPress={handlePrevMonth} style={styles.monthButton}>
@@ -41,55 +43,65 @@ const MonthlyStats = ({ games }: Props) => {
       ) : (
         <View style={styles.blocksWrapper}>
           {filteredGames.length < 5 ? (
-            <Text style={styles.warning}>Pas assez de parties enregistrées.</Text>
+            <Text style={sharedStyles.warning}>Pas assez de parties enregistrées.</Text>
           ) : (
             <>
               {/* Score du mois */}
-              <View style={styles.block}>
-                <Text style={styles.blockTitle}>Score du mois</Text>
+              <View style={sharedStyles.block}>
+                <Text style={sharedStyles.blockTitle}>Score du mois</Text>
                 <View style={styles.row}>
                   <View style={styles.column}>
-                    <Text style={styles.playerName}>Joueur A</Text>
-                    <Text style={styles.playerValue}>{stats.totalPointsA} pts</Text>
+                    <Text style={sharedStyles.playerName}>Joueur A</Text>
+                    <Text style={sharedStyles.playerValue}>{stats.totalPointsA} pts</Text>
                   </View>
                   <View style={styles.separator} />
                   <View style={styles.column}>
-                    <Text style={styles.playerName}>Joueur B</Text>
-                    <Text style={styles.playerValue}>{stats.totalPointsB} pts</Text>
+                    <Text style={sharedStyles.playerName}>Joueur B</Text>
+                    <Text style={sharedStyles.playerValue}>{stats.totalPointsB} pts</Text>
                   </View>
                 </View>
+              </View>
+
+              {/* 📈 Série de victoires en cours */}
+              <View style={sharedStyles.block}>
+                <Text style={sharedStyles.blockTitle}>📈 Série de victoires en cours</Text>
+                <Text style={sharedStyles.blockText}>
+                  {currentStreak.count > 0
+                    ? `Joueur ${currentStreak.player} – ${currentStreak.count} victoire${currentStreak.count > 1 ? "s" : ""}`
+                    : "ni l’un ni l’autre 😅"}
+                </Text>
               </View>
 
               {/* % Victoires / Parties */}
-              <View style={styles.block}>
-                <Text style={styles.blockTitle}>Nombre de parties : {stats.totalGames}</Text>
+              <View style={sharedStyles.block}>
+                <Text style={sharedStyles.blockTitle}>Nombre de parties : {stats.totalGames}</Text>
 
                 <View style={styles.row}>
                   <View style={styles.half}>
-                    <Text style={styles.label}>Joueur A</Text>
-                    <Text style={styles.value}>{stats.winRateA}%</Text>
+                    <Text style={sharedStyles.label}>Joueur A</Text>
+                    <Text style={sharedStyles.value}>{stats.winRateA}%</Text>
                   </View>
                   <View style={styles.half}>
-                    <Text style={styles.label}>Joueur B</Text>
-                    <Text style={styles.value}>{stats.winRateB}%</Text>
+                    <Text style={sharedStyles.label}>Joueur B</Text>
+                    <Text style={sharedStyles.value}>{stats.winRateB}%</Text>
                   </View>
                 </View>
 
-                <Text style={[styles.label, { textAlign: "center", marginTop: 6 }]}>Matchs nuls : {stats.drawRate}%</Text>
+                <Text style={[sharedStyles.label, { textAlign: "center", marginTop: 6 }]}>Matchs nuls : {stats.drawRate}%</Text>
               </View>
 
               {/* Donut Chart Placeholder */}
-              <View style={styles.block}>
-                <Text style={styles.blockTitle}>📊 Donut répartitions V/D</Text>
-                <Text style={styles.blockText}>[À intégrer plus tard]</Text>
+              <View style={sharedStyles.block}>
+                <Text style={sharedStyles.blockTitle}>📊 Donut répartitions V/D</Text>
+                <Text style={sharedStyles.blockText}>[À intégrer plus tard]</Text>
               </View>
 
               {/* Dernières parties */}
-              <View style={styles.block}>
-                <Text style={styles.blockTitle}>Historique des dernières parties</Text>
+              <View style={sharedStyles.block}>
+                <Text style={sharedStyles.blockTitle}>Historique des dernières parties</Text>
                 <View style={styles.historyRow}>
                   <View style={styles.historyColumn}>
-                    <Text style={styles.blockText}>Toto</Text>
+                    <Text style={sharedStyles.blockText}>Toto</Text>
                     <Text style={styles.historyText}>
                       {stats.lastResults
                         .slice(-5)
@@ -98,7 +110,7 @@ const MonthlyStats = ({ games }: Props) => {
                     </Text>
                   </View>
                   <View style={styles.historyColumn}>
-                    <Text style={styles.blockText}>Lulu</Text>
+                    <Text style={sharedStyles.blockText}>Lulu</Text>
                     <Text style={styles.historyText}>
                       {stats.lastResults
                         .slice(-5)
@@ -110,32 +122,32 @@ const MonthlyStats = ({ games }: Props) => {
               </View>
 
               {/* Moyenne des points */}
-              <View style={styles.block}>
-                <Text style={styles.blockTitle}>Moyenne de points / partie</Text>
+              <View style={sharedStyles.block}>
+                <Text style={sharedStyles.blockTitle}>Moyenne de points / partie</Text>
                 <View style={styles.row}>
                   <View style={styles.column}>
-                    <Text style={styles.playerLabel}>Joueur A</Text>
-                    <Text style={styles.blockText}>{stats.avgScoreA} pts</Text>
+                    <Text style={sharedStyles.playerLabel}>Joueur A</Text>
+                    <Text style={sharedStyles.blockText}>{stats.avgScoreA} pts</Text>
                   </View>
                   <Text style={styles.separator}>|</Text>
                   <View style={styles.column}>
-                    <Text style={styles.playerLabel}>Joueur B</Text>
-                    <Text style={styles.blockText}>{stats.avgScoreB} pts</Text>
+                    <Text style={sharedStyles.playerLabel}>Joueur B</Text>
+                    <Text style={sharedStyles.blockText}>{stats.avgScoreB} pts</Text>
                   </View>
                 </View>
               </View>
 
               {/* Meilleure victoire */}
-              <View style={styles.block}>
-                <Text style={styles.blockTitle}>Meilleure victoire</Text>
+              <View style={sharedStyles.block}>
+                <Text style={sharedStyles.blockTitle}>Meilleure victoire</Text>
                 <View style={styles.rowBetween}>
                   <View style={styles.playerStat}>
-                    <Text style={styles.playerName}>Joueur A</Text>
-                    <Text style={styles.playerValue}>{stats.bestVictoryA} pts</Text>
+                    <Text style={sharedStyles.playerName}>Joueur A</Text>
+                    <Text style={sharedStyles.playerValue}>{stats.bestVictoryA} pts</Text>
                   </View>
                   <View style={styles.playerStat}>
-                    <Text style={styles.playerName}>Joueur B</Text>
-                    <Text style={styles.playerValue}>{stats.bestVictoryB} pts</Text>
+                    <Text style={sharedStyles.playerName}>Joueur B</Text>
+                    <Text style={sharedStyles.playerValue}>{stats.bestVictoryB} pts</Text>
                   </View>
                 </View>
               </View>

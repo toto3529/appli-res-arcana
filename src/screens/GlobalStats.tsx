@@ -1,92 +1,83 @@
-import { View, Text } from "react-native"
 import { useMemo } from "react"
-import { Game } from "@stores/gameStore"
+import { View, Text, ScrollView } from "react-native"
+import { useGameStore } from "@stores/gameStore"
+import { calculateGlobalStats } from "@utils/statsHelpers"
+import { sharedStyles } from "./StatsScreen.styles"
 
-interface Props {
-  games: Game[]
-}
+export default function StatsGlobalScreen() {
+  const games = useGameStore((state) => state.games)
 
-export default function GlobalStats({ games }: Props) {
-  const total = games.length
+  const stats = useMemo(() => calculateGlobalStats(games), [games])
 
-  const stats = useMemo(() => {
-    let winsA = 0
-    let winsB = 0
-    let draws = 0
-    let totalPoints = 0
-    let bestDiffA = 0
-    let bestDiffB = 0
-
-    let streakA = 0
-    let maxStreakA = 0
-    let streakB = 0
-    let maxStreakB = 0
-
-    games.forEach((g) => {
-      totalPoints += g.scoreA + g.scoreB
-      const diff = Math.abs(g.scoreA - g.scoreB)
-
-      let winner: "A" | "B" | "equal" = "equal"
-      if (g.scoreA > g.scoreB || (g.scoreA === g.scoreB && g.winnerOnTie === "A")) {
-        winner = "A"
-      } else if (g.scoreB > g.scoreA || (g.scoreA === g.scoreB && g.winnerOnTie === "B")) {
-        winner = "B"
-      }
-
-      if (winner === "A") {
-        winsA++
-        streakA++
-        streakB = 0
-        bestDiffA = Math.max(bestDiffA, diff)
-      } else if (winner === "B") {
-        winsB++
-        streakB++
-        streakA = 0
-        bestDiffB = Math.max(bestDiffB, diff)
-      } else {
-        draws++
-        streakA = 0
-        streakB = 0
-      }
-
-      maxStreakA = Math.max(maxStreakA, streakA)
-      maxStreakB = Math.max(maxStreakB, streakB)
-    })
-
-    const avgPoints = total > 0 ? totalPoints / total : 0
-
-    return {
-      winsA,
-      winsB,
-      draws,
-      avgPoints,
-      bestDiffA,
-      bestDiffB,
-      maxStreakA,
-      maxStreakB,
-    }
-  }, [games])
-
-  if (total < 5) {
+  if (games.length < 5) {
     return (
-      <View style={{ padding: 16 }}>
-        <Text>Encore trop peu de données pour le streak / average.</Text>
+      <View style={sharedStyles.container}>
+        <Text style={sharedStyles.title}>🌍 Stats globales</Text>
+        <Text style={sharedStyles.blockText}>Encore trop peu de données pour le streak / moyenne.</Text>
       </View>
     )
   }
 
   return (
-    <View style={{ padding: 16 }}>
-      <Text style={{ fontWeight: "bold", fontSize: 18 }}>🌍 Stats Globales</Text>
-      <Text>Nombre total de parties : {total}</Text>
-      <Text>% Victoires Joueur A : {((stats.winsA / total) * 100).toFixed(1)}%</Text>
-      <Text>% Victoires Joueur B : {((stats.winsB / total) * 100).toFixed(1)}%</Text>
-      <Text>% Égalités : {((stats.draws / total) * 100).toFixed(1)}%</Text>
-      <Text>Moyenne de points par partie : {stats.avgPoints.toFixed(1)}</Text>
-      <Text>Meilleure victoire Joueur A (écart) : {stats.bestDiffA}</Text>
-      <Text>Meilleure victoire Joueur B (écart) : {stats.bestDiffB}</Text>
-      <Text>Plus grande série de victoires Joueur A : {stats.maxStreakA}</Text>
-      <Text>Plus grande série de victoires Joueur B : {stats.maxStreakB}</Text>
-    </View>
+    <ScrollView contentContainerStyle={sharedStyles.container}>
+      <Text style={sharedStyles.title}>🌍 Stats globales</Text>
+
+      {/* Plus grande série de victoires */}
+      <View style={sharedStyles.block}>
+        <Text style={sharedStyles.blockTitle}>Plus grande série de victoire Joueur A :</Text>
+        <Text style={sharedStyles.blockText}>{stats.longestStreakA}</Text>
+      </View>
+
+      <View style={sharedStyles.block}>
+        <Text style={sharedStyles.blockTitle}>Plus grande série de victoire Joueur B :</Text>
+        <Text style={sharedStyles.blockText}>{stats.longestStreakB}</Text>
+      </View>
+
+      {/* Nombre total de parties + % victoires */}
+      <View style={sharedStyles.block}>
+        <Text style={sharedStyles.blockTitle}>Nombre de parties : {stats.totalGames}</Text>
+        <View style={sharedStyles.row}>
+          <View style={sharedStyles.column}>
+            <Text style={sharedStyles.blockSubtitle}>Joueur A</Text>
+            <Text style={sharedStyles.blockText}>{stats.rawRateA}%</Text>
+          </View>
+          <View style={sharedStyles.column}>
+            <Text style={sharedStyles.blockSubtitle}>Joueur B</Text>
+            <Text style={sharedStyles.blockText}>{stats.rawRateB}%</Text>
+          </View>
+        </View>
+        <Text style={sharedStyles.blockTextCenter}>Matchs nuls : {stats.drawRate}%</Text>
+      </View>
+
+      {/* Moyenne de points */}
+      <View style={sharedStyles.block}>
+        <Text style={sharedStyles.blockTitle}>Moyenne de points / partie</Text>
+        <View style={sharedStyles.row}>
+          <View style={sharedStyles.column}>
+            <Text style={sharedStyles.blockSubtitle}>Joueur A</Text>
+            <Text style={sharedStyles.blockText}>{stats.avgScoreA} pts</Text>
+          </View>
+          <View style={sharedStyles.column}>
+            <Text style={sharedStyles.blockSubtitle}>Joueur B</Text>
+            <Text style={sharedStyles.blockText}>{stats.avgScoreB} pts</Text>
+          </View>
+        </View>
+      </View>
+
+      {/* Meilleure victoire */}
+      <View style={sharedStyles.block}>
+        <Text style={sharedStyles.blockTitle}>Meilleure victoire (écart)</Text>
+        <View style={sharedStyles.row}>
+          <View style={sharedStyles.column}>
+            <Text style={sharedStyles.blockSubtitle}>Joueur A</Text>
+            <Text style={sharedStyles.blockText}>{stats.bestVictoryA}</Text>
+          </View>
+          <View style={sharedStyles.column}>
+            <Text style={sharedStyles.blockSubtitle}>Joueur B</Text>
+            <Text style={sharedStyles.blockText}>{stats.bestVictoryB}</Text>
+          </View>
+        </View>
+      </View>
+    </ScrollView>
   )
 }
