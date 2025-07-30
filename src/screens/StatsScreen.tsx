@@ -2,8 +2,8 @@ import { useState } from "react"
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from "react-native"
 import { useGameStore } from "@stores/gameStore"
 import MonthlyStats from "./MonthlyStats"
-import GlobalStats from "./GlobalStats"
 import { SafeAreaView } from "react-native-safe-area-context"
+import { GlobalStats } from "./GlobalStats"
 
 export default function StatsScreen() {
   const { games } = useGameStore()

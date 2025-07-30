@@ -1,12 +1,14 @@
 import { useMemo } from "react"
 import { View, Text, ScrollView } from "react-native"
-import { useGameStore } from "@stores/gameStore"
+import { Game } from "@stores/gameStore"
 import { calculateGlobalStats } from "@utils/statsHelpers"
 import { sharedStyles } from "./StatsScreen.styles"
 
-export default function StatsGlobalScreen() {
-  const games = useGameStore((state) => state.games)
+interface Props {
+  games: Game[]
+}
 
+export const GlobalStats = ({ games }: Props) => {
   const stats = useMemo(() => calculateGlobalStats(games), [games])
 
   if (games.length < 5) {
