@@ -6,6 +6,7 @@ import { format } from "date-fns"
 import { useGameStore } from "@stores/gameStore"
 import { NativeStackScreenProps } from "@react-navigation/native-stack"
 import { RootStackParamList } from "src/navigation/types"
+import { useThemeStore } from "@stores/themeStore"
 
 type Props = NativeStackScreenProps<RootStackParamList, "HomeMain">
 
@@ -15,6 +16,18 @@ export default function HomeScreen({ navigation }: Props) {
   const deleteGame = useGameStore((s) => s.deleteGame)
   const listRef = useRef<SwipeListView<any>>(null)
   const openRowRef = useRef<SwipeRow<any> | null>(null)
+  const { isDark } = useThemeStore()
+
+  const colors = {
+    background: isDark ? "#000" : "#fff",
+    card: isDark ? "#1a1a1a" : "#eee",
+    textMain: isDark ? "#fff" : "#000",
+    textSecondary: isDark ? "#ccc" : "#666",
+    win: "green",
+    loss: "red",
+    draw: "#888",
+    buttonBg: isDark ? "#111" : "#fff",
+  }
 
   useFocusEffect(
     useCallback(() => {
@@ -49,6 +62,127 @@ export default function HomeScreen({ navigation }: Props) {
     .slice(0, 20)
     .map((item) => ({ key: item.id, ...item }) as any) // SwipeListView exige un champ `key`
 
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors.background,
+      paddingTop: 32,
+    },
+    title: {
+      textAlign: "center",
+      fontSize: 20,
+      fontWeight: "bold",
+      color: colors.textMain,
+    },
+    subtitle: {
+      textAlign: "center",
+      fontSize: 16,
+      marginBottom: 12,
+      color: colors.textSecondary,
+    },
+    listWrapper: {
+      flex: 1,
+      overflow: "hidden",
+    },
+    rowFront: {
+      marginHorizontal: 16,
+      marginVertical: 6,
+      height: 80,
+      borderRadius: 4,
+      overflow: "hidden",
+      backgroundColor: colors.card,
+    },
+    rowContent: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      padding: 12,
+    },
+    playerBox: {
+      width: "30%",
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    playerName: {
+      fontSize: 16,
+      fontWeight: "bold",
+      color: colors.textMain,
+    },
+    status: {
+      fontSize: 14,
+    },
+    scoreBox: {
+      width: "40%",
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    scoreText: {
+      fontSize: 18,
+      fontWeight: "bold",
+      color: colors.textMain,
+    },
+    dateText: {
+      fontSize: 12,
+      color: colors.textSecondary,
+      marginTop: 4,
+    },
+    rowBack: {
+      position: "absolute",
+      top: 6,
+      bottom: 6,
+      left: 16,
+      right: 16,
+      height: 80,
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      borderRadius: 4,
+      overflow: "hidden",
+    },
+    editButton: {
+      width: 80,
+      height: 80,
+      backgroundColor: "#4CAF50",
+      justifyContent: "center",
+      alignItems: "center",
+      borderTopLeftRadius: 4,
+      borderBottomLeftRadius: 4,
+    },
+    editText: {
+      color: "#fff",
+      fontWeight: "bold",
+    },
+    deleteButton: {
+      width: 80,
+      height: 80,
+      backgroundColor: "red",
+      justifyContent: "center",
+      alignItems: "center",
+      borderTopRightRadius: 4,
+      borderBottomRightRadius: 4,
+    },
+    deleteText: {
+      color: "#fff",
+      fontWeight: "bold",
+    },
+    addButtonContainer: {
+      position: "absolute",
+      bottom: 0,
+      width: "100%",
+      padding: 16,
+      backgroundColor: colors.buttonBg,
+    },
+    win: {
+      color: colors.win,
+    },
+    loss: {
+      color: colors.loss,
+    },
+    draw: {
+      color: colors.draw,
+    },
+  })
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>RES ARCANA</Text>
@@ -60,33 +194,15 @@ export default function HomeScreen({ navigation }: Props) {
           data={data}
           bounces={false}
           keyExtractor={(item) => item.key}
-          //initialNumToRender={10}
           leftOpenValue={80}
           rightOpenValue={-80}
           contentContainerStyle={{ paddingBottom: 100 }}
-          //removeClippedSubviews={false}
-
           onRowOpen={(rowKey, rowMap) => {
             if (openRowRef.current && openRowRef.current !== rowMap[rowKey]) {
               openRowRef.current.closeRow()
             }
             openRowRef.current = rowMap[rowKey]
           }}
-          // renderItem={({ item }) => {
-          //   const winA = item.scoreA > item.scoreB
-          //   return (
-          //     <TouchableOpacity style={styles.rowFront} activeOpacity={0.7}>
-          //       <View style={styles.rowHeader}>
-          //         <Text style={styles.date}>{format(item.date, "dd/MM/yyyy")}</Text>
-          //         <Text style={[styles.indicator, winA ? styles.win : styles.loss]}>{winA ? "✓" : "✗"}</Text>
-          //       </View>
-          //       <Text style={styles.score}>
-          //         {item.scoreA} – {item.scoreB}
-          //       </Text>
-          //     </TouchableOpacity>
-          //   )
-          // }}
-
           renderItem={({ item }) => {
             let winA: boolean | null = item.scoreA > item.scoreB
             const draw = item.scoreA === item.scoreB
@@ -149,149 +265,3 @@ export default function HomeScreen({ navigation }: Props) {
     </View>
   )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    paddingTop: 32,
-  },
-  title: {
-    textAlign: "center",
-    fontSize: 20,
-    fontWeight: "bold",
-  },
-  subtitle: {
-    textAlign: "center",
-    fontSize: 16,
-    marginBottom: 12,
-  },
-  listWrapper: {
-    flex: 1,
-    overflow: "hidden",
-  },
-  draw: {
-    color: "#888", // gris
-  },
-  rowFront: {
-    marginHorizontal: 16,
-    marginVertical: 6,
-    padding: 0,
-    height: 80, // ✅ Hauteur fixe
-    borderRadius: 4,
-    overflow: "hidden",
-    backgroundColor: "#eee", // ✅ Appliqué ici pour couvrir les boutons
-  },
-  rowHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 4,
-  },
-  date: {
-    fontSize: 14,
-    color: "#666",
-  },
-  indicator: {
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  win: {
-    color: "green",
-  },
-  loss: {
-    color: "red",
-  },
-  score: {
-    fontSize: 20,
-    textAlign: "center",
-  },
-  rowBack: {
-    position: "absolute",
-    top: 6,
-    bottom: 6,
-    left: 16,
-    right: 16,
-    height: 80, // ✅ Même hauteur que rowFront
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    borderRadius: 4,
-    overflow: "hidden",
-  },
-
-  deleteButton: {
-    width: 80, // ✅ Largeur = hauteur = 80px = carré
-    height: 80,
-    backgroundColor: "red",
-    justifyContent: "center",
-    alignItems: "center",
-    borderTopRightRadius: 4,
-    borderBottomRightRadius: 4,
-  },
-
-  deleteText: {
-    color: "#fff",
-    fontWeight: "bold",
-  },
-  addButtonContainer: {
-    position: "absolute",
-    bottom: 0,
-    width: "100%",
-    padding: 16,
-    backgroundColor: "#fff",
-  },
-  editButton: {
-    width: 80, // ✅ Largeur = hauteur = 80px = carré
-    height: 80,
-    backgroundColor: "#4CAF50",
-    justifyContent: "center",
-    alignItems: "center",
-    borderTopLeftRadius: 4,
-    borderBottomLeftRadius: 4,
-  },
-  editText: {
-    color: "#fff",
-    fontWeight: "bold",
-  },
-
-  rowContent: {
-    backgroundColor: "#eee",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    padding: 12,
-  },
-
-  playerBox: {
-    width: "30%",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-
-  playerName: {
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-
-  status: {
-    fontSize: 14,
-  },
-
-  scoreBox: {
-    width: "40%",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-
-  scoreText: {
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-
-  dateText: {
-    fontSize: 12,
-    color: "#666",
-    marginTop: 4,
-  },
-})

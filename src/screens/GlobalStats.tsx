@@ -2,7 +2,7 @@ import { useMemo } from "react"
 import { View, Text, ScrollView } from "react-native"
 import { Game } from "@stores/gameStore"
 import { calculateGlobalStats } from "@utils/statsHelpers"
-import { sharedStyles } from "./StatsScreen.styles"
+import { useStatsStyles } from "./StatsScreen.styles"
 
 interface Props {
   games: Game[]
@@ -10,6 +10,7 @@ interface Props {
 
 export const GlobalStats = ({ games }: Props) => {
   const stats = useMemo(() => calculateGlobalStats(games), [games])
+  const sharedStyles = useStatsStyles()
 
   if (games.length < 5) {
     return (

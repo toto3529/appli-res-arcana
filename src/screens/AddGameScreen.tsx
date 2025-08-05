@@ -5,11 +5,25 @@ import { usePlayerStore } from "@stores/playerStore"
 import { useGameStore } from "@stores/gameStore"
 import { NativeStackScreenProps } from "@react-navigation/native-stack"
 import { RootStackParamList } from "src/navigation/types"
+import { useThemeStore } from "@stores/themeStore"
 
 // Définition des props de navigation pour TypeScript
 type Props = NativeStackScreenProps<RootStackParamList, "AddGame">
 
 export default function AddGameScreen({ navigation }: Props) {
+  const { isDark } = useThemeStore()
+
+  const colors = {
+    background: isDark ? "#000" : "#fff",
+    text: isDark ? "#fff" : "#000",
+    inputBg: isDark ? "#222" : "#eee",
+    inputBorder: isDark ? "#444" : "#ccc",
+    buttonBg: isDark ? "#111" : "#fff",
+    modalBg: isDark ? "#1a1a1a" : "#fff",
+    modalText: isDark ? "#fff" : "#333",
+    overlay: "rgba(0,0,0,0.5)",
+  }
+
   // On récupère les noms de joueurs depuis le store persistant
   const playerA = usePlayerStore((s) => s.playerA)
   const playerB = usePlayerStore((s) => s.playerB)
@@ -87,6 +101,108 @@ export default function AddGameScreen({ navigation }: Props) {
     navigation.goBack()
   }
 
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      padding: 16,
+      backgroundColor: colors.background,
+    },
+    label: {
+      fontSize: 16,
+      marginTop: 16,
+      color: colors.text,
+    },
+    dateText: {
+      fontSize: 18,
+      paddingVertical: 8,
+      paddingHorizontal: 12,
+      backgroundColor: colors.inputBg,
+      borderRadius: 4,
+      marginTop: 4,
+      alignSelf: "flex-start",
+      color: colors.text,
+    },
+    input: {
+      borderWidth: 1,
+      borderColor: colors.inputBorder,
+      backgroundColor: colors.inputBg,
+      color: colors.text,
+      borderRadius: 4,
+      padding: 8,
+      marginTop: 4,
+      width: 80,
+    },
+    buttonWrapper: {
+      marginTop: 12,
+    },
+    modalOverlay: {
+      flex: 1,
+      backgroundColor: colors.overlay,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    modalContainer: {
+      backgroundColor: colors.modalBg,
+      padding: 24,
+      borderRadius: 8,
+      width: "80%",
+      alignItems: "center",
+    },
+    modalTitle: {
+      fontSize: 18,
+      fontWeight: "bold",
+      marginBottom: 16,
+      color: colors.text,
+    },
+    modalOption: {
+      paddingVertical: 10,
+      paddingHorizontal: 16,
+      backgroundColor: colors.inputBg,
+      borderRadius: 4,
+      marginVertical: 6,
+      width: "100%",
+      alignItems: "center",
+    },
+    modalOptionSelected: {
+      backgroundColor: "#007BFF",
+    },
+    modalOptionText: {
+      fontSize: 16,
+      color: colors.modalText,
+    },
+    modalOptionTextSelected: {
+      fontSize: 16,
+      color: "#fff",
+      fontWeight: "bold",
+    },
+    modalActions: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      marginTop: 16,
+      width: "100%",
+    },
+    cancelButton: {
+      paddingVertical: 10,
+      paddingHorizontal: 20,
+      backgroundColor: "#ccc",
+      borderRadius: 4,
+    },
+    cancelText: {
+      color: "#333",
+      fontWeight: "bold",
+    },
+    okButton: {
+      paddingVertical: 10,
+      paddingHorizontal: 32,
+      backgroundColor: "#007BFF",
+      borderRadius: 4,
+    },
+    okText: {
+      color: "#fff",
+      fontWeight: "bold",
+    },
+  })
+
   return (
     <View style={styles.container}>
       {/* Label + déclencheur du picker de date */}
@@ -156,119 +272,3 @@ export default function AddGameScreen({ navigation }: Props) {
     </View>
   )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 16,
-    backgroundColor: "#fff",
-  },
-  label: {
-    fontSize: 16,
-    marginTop: 16,
-  },
-  dateText: {
-    fontSize: 18,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    backgroundColor: "#eee",
-    borderRadius: 4,
-    marginTop: 4,
-    alignSelf: "flex-start",
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 4,
-    padding: 8,
-    marginTop: 4,
-    width: 80,
-  },
-  buttonWrapper: {
-    marginTop: 12,
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.5)",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  modalContainer: {
-    backgroundColor: "white",
-    padding: 24,
-    borderRadius: 8,
-    width: "80%",
-    alignItems: "center",
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 16,
-  },
-  modalButton: {
-    fontSize: 16,
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    marginVertical: 6,
-    backgroundColor: "#eee",
-    borderRadius: 4,
-    width: "100%",
-    textAlign: "center",
-  },
-
-  modalOption: {
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    backgroundColor: "#eee",
-    borderRadius: 4,
-    marginVertical: 6,
-    width: "100%",
-    alignItems: "center",
-  },
-
-  modalOptionSelected: {
-    backgroundColor: "#007BFF",
-  },
-
-  modalOptionText: {
-    fontSize: 16,
-    color: "#333",
-  },
-
-  modalOptionTextSelected: {
-    fontSize: 16,
-    color: "#fff",
-    fontWeight: "bold",
-  },
-
-  modalActions: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginTop: 16,
-    width: "100%",
-  },
-
-  cancelButton: {
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    backgroundColor: "#ccc",
-    borderRadius: 4,
-  },
-
-  cancelText: {
-    color: "#333",
-    fontWeight: "bold",
-  },
-
-  okButton: {
-    paddingVertical: 10,
-    paddingHorizontal: 32,
-    backgroundColor: "#007BFF",
-    borderRadius: 4,
-  },
-
-  okText: {
-    color: "#fff",
-    fontWeight: "bold",
-  },
-})
