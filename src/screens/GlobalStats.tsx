@@ -3,6 +3,7 @@ import { View, Text, ScrollView } from "react-native"
 import { Game } from "@stores/gameStore"
 import { calculateGlobalStats } from "@utils/statsHelpers"
 import { useStatsStyles } from "./StatsScreen.styles"
+import { usePlayerStore } from "@stores/playerStore"
 
 interface Props {
   games: Game[]
@@ -11,6 +12,7 @@ interface Props {
 export const GlobalStats = ({ games }: Props) => {
   const stats = useMemo(() => calculateGlobalStats(games), [games])
   const sharedStyles = useStatsStyles()
+  const { playerA, playerB } = usePlayerStore()
 
   if (games.length < 5) {
     return (
@@ -28,8 +30,12 @@ export const GlobalStats = ({ games }: Props) => {
       {/* Plus grande série de victoires */}
       <View style={sharedStyles.block}>
         <Text style={sharedStyles.blockTitle}>Plus grande série de victoire :</Text>
-        <Text style={sharedStyles.blockText}>Joueur A : {stats.longestStreakA}</Text>
-        <Text style={sharedStyles.blockText}>Joueur B : {stats.longestStreakB}</Text>
+        <Text style={sharedStyles.blockText}>
+          {playerA} : {stats.longestStreakA}
+        </Text>
+        <Text style={sharedStyles.blockText}>
+          {playerB} : {stats.longestStreakB}
+        </Text>
       </View>
 
       {/* Nombre total de parties + % victoires */}
@@ -37,11 +43,11 @@ export const GlobalStats = ({ games }: Props) => {
         <Text style={sharedStyles.blockTitle}>Nombre de parties : {stats.totalGames}</Text>
         <View style={sharedStyles.row}>
           <View style={sharedStyles.column}>
-            <Text style={sharedStyles.blockSubtitle}>Joueur A</Text>
+            <Text style={sharedStyles.blockSubtitle}>{playerA}</Text>
             <Text style={sharedStyles.blockText}>{stats.rawRateA}%</Text>
           </View>
           <View style={sharedStyles.column}>
-            <Text style={sharedStyles.blockSubtitle}>Joueur B</Text>
+            <Text style={sharedStyles.blockSubtitle}>{playerB}</Text>
             <Text style={sharedStyles.blockText}>{stats.rawRateB}%</Text>
           </View>
         </View>
@@ -53,11 +59,11 @@ export const GlobalStats = ({ games }: Props) => {
         <Text style={sharedStyles.blockTitle}>Moyenne de points / partie</Text>
         <View style={sharedStyles.row}>
           <View style={sharedStyles.column}>
-            <Text style={sharedStyles.blockSubtitle}>Joueur A</Text>
+            <Text style={sharedStyles.blockSubtitle}>{playerA}</Text>
             <Text style={sharedStyles.blockText}>{stats.avgScoreA} pts</Text>
           </View>
           <View style={sharedStyles.column}>
-            <Text style={sharedStyles.blockSubtitle}>Joueur B</Text>
+            <Text style={sharedStyles.blockSubtitle}>{playerB}</Text>
             <Text style={sharedStyles.blockText}>{stats.avgScoreB} pts</Text>
           </View>
         </View>
@@ -74,11 +80,11 @@ export const GlobalStats = ({ games }: Props) => {
         <Text style={sharedStyles.blockTitle}>Meilleure victoire (écart)</Text>
         <View style={sharedStyles.row}>
           <View style={sharedStyles.column}>
-            <Text style={sharedStyles.blockSubtitle}>Joueur A</Text>
+            <Text style={sharedStyles.blockSubtitle}>{playerA}</Text>
             <Text style={sharedStyles.blockText}>{stats.bestVictoryA}</Text>
           </View>
           <View style={sharedStyles.column}>
-            <Text style={sharedStyles.blockSubtitle}>Joueur B</Text>
+            <Text style={sharedStyles.blockSubtitle}>{playerB}</Text>
             <Text style={sharedStyles.blockText}>{stats.bestVictoryB}</Text>
           </View>
         </View>

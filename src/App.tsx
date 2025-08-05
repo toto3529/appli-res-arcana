@@ -10,12 +10,22 @@ import MainNavigation from "./navigation/MainNavigation"
 import { GestureHandlerRootView } from "react-native-gesture-handler"
 import { useThemeStore } from "@stores/themeStore"
 import { useEffect, useState } from "react"
+import { usePlayerStore } from "@stores/playerStore"
 
 export default function App() {
   const loadTheme = useThemeStore((s) => s.loadTheme)
   const theme = useThemeStore((s) => s.mode)
-
+  const loadPlayers = usePlayerStore((s) => s.loadPlayers)
   const [isReady, setIsReady] = useState(false)
+
+  useEffect(() => {
+    const init = async () => {
+      await loadTheme()
+      await loadPlayers()
+      setIsReady(true)
+    }
+    init()
+  }, [])
 
   useEffect(() => {
     const init = async () => {

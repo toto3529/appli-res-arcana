@@ -6,11 +6,13 @@ import { RootStackParamList } from "src/navigation/types"
 import { database } from "src/db/database"
 import GameModel from "src/models/GameModel"
 import { useThemeStore } from "@stores/themeStore"
+import { formatDateFr } from "@utils/formatDate"
+import { usePlayerStore } from "@stores/playerStore"
 
 type Props = NativeStackScreenProps<RootStackParamList, "EditGame">
 
 export default function EditGameScreen({ route, navigation }: Props) {
-  const { isDark } = useThemeStore()
+  const isDark = useThemeStore((s) => s.isDark())
   const colors = {
     background: isDark ? "#000" : "#fff",
     text: isDark ? "#fff" : "#000",
@@ -29,6 +31,7 @@ export default function EditGameScreen({ route, navigation }: Props) {
   const [showPicker, setShowPicker] = useState(false)
   const [winnerOnTie, setWinnerOnTie] = useState<"A" | "B" | "equal" | null>(null)
   const [isModalVisible, setIsModalVisible] = useState(false)
+  const { playerA, playerB } = usePlayerStore()
 
   useEffect(() => {
     const load = async () => {
@@ -173,7 +176,7 @@ export default function EditGameScreen({ route, navigation }: Props) {
       <Text style={styles.title}>Modifier la partie</Text>
 
       <Text style={styles.label}>Date de la partie :</Text>
-      <Button title={date.toLocaleDateString()} onPress={() => setShowPicker(true)} />
+      <Button title={formatDateFr(date, "eeee d MMMM yyyy")} onPress={() => setShowPicker(true)} />
       {showPicker && (
         <DateTimePicker
           value={date}
@@ -186,10 +189,10 @@ export default function EditGameScreen({ route, navigation }: Props) {
         />
       )}
 
-      <Text style={styles.label}>Score Joueur A :</Text>
+      <Text style={styles.label}>Score {playerA} :</Text>
       <TextInput style={styles.input} keyboardType="numeric" value={scoreA} onChangeText={setScoreA} />
 
-      <Text style={styles.label}>Score Joueur B :</Text>
+      <Text style={styles.label}>Score {playerB} :</Text>
       <TextInput style={styles.input} keyboardType="numeric" value={scoreB} onChangeText={setScoreB} />
 
       <View style={styles.buttonWrapper}>
@@ -205,7 +208,7 @@ export default function EditGameScreen({ route, navigation }: Props) {
             <Text style={styles.modalTitle}>Qui a le plus d'essences ?</Text>
             {/* Options de sélection */}
             {["A", "B", "equal"].map((value) => {
-              const label = value === "A" ? "Joueur A" : value === "B" ? "Joueur B" : "Égalité parfaite"
+              const label = value === "A" ? playerA : value === "B" ? playerB : "Égalité parfaite"
               const selected = winnerOnTie === value
               return (
                 <TouchableOpacity

@@ -9,6 +9,7 @@ interface ThemeStore {
   setMode: (mode: ThemeMode) => Promise<void>
   loadTheme: () => Promise<void>
   effectiveTheme: () => ThemeMode
+  isDark: () => boolean
 }
 
 export const useThemeStore = create<ThemeStore>((set, get) => ({
@@ -31,4 +32,5 @@ export const useThemeStore = create<ThemeStore>((set, get) => ({
     if (mode === "light" || mode === "dark") return mode
     return Appearance.getColorScheme() === "dark" ? "dark" : "light"
   },
+  isDark: () => get().effectiveTheme() === "dark",
 }))

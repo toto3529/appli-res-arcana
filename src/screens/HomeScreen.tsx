@@ -7,6 +7,7 @@ import { useGameStore } from "@stores/gameStore"
 import { NativeStackScreenProps } from "@react-navigation/native-stack"
 import { RootStackParamList } from "src/navigation/types"
 import { useThemeStore } from "@stores/themeStore"
+import { usePlayerStore } from "@stores/playerStore"
 
 type Props = NativeStackScreenProps<RootStackParamList, "HomeMain">
 
@@ -16,7 +17,8 @@ export default function HomeScreen({ navigation }: Props) {
   const deleteGame = useGameStore((s) => s.deleteGame)
   const listRef = useRef<SwipeListView<any>>(null)
   const openRowRef = useRef<SwipeRow<any> | null>(null)
-  const { isDark } = useThemeStore()
+  const isDark = useThemeStore((s) => s.isDark())
+  const { playerA, playerB } = usePlayerStore()
 
   const colors = {
     background: isDark ? "#000" : "#fff",
@@ -211,8 +213,6 @@ export default function HomeScreen({ navigation }: Props) {
             else if (draw && item.winnerOnTie === "B") winA = false
             else if (draw && item.winnerOnTie === "equal") winA = null
 
-            const playerA = "Toto"
-            const playerB = "Lulu"
             return (
               <TouchableOpacity style={styles.rowFront} activeOpacity={1}>
                 <View style={styles.rowContent}>

@@ -6,12 +6,13 @@ import { useGameStore } from "@stores/gameStore"
 import { NativeStackScreenProps } from "@react-navigation/native-stack"
 import { RootStackParamList } from "src/navigation/types"
 import { useThemeStore } from "@stores/themeStore"
+import { formatDateFr } from "@utils/formatDate"
 
 // Définition des props de navigation pour TypeScript
 type Props = NativeStackScreenProps<RootStackParamList, "AddGame">
 
 export default function AddGameScreen({ navigation }: Props) {
-  const { isDark } = useThemeStore()
+  const isDark = useThemeStore((s) => s.isDark())
 
   const colors = {
     background: isDark ? "#000" : "#fff",
@@ -208,7 +209,7 @@ export default function AddGameScreen({ navigation }: Props) {
       {/* Label + déclencheur du picker de date */}
       <Text style={styles.label}>Date de la partie :</Text>
       <TouchableOpacity onPress={() => setShowPicker(true)}>
-        <Text style={styles.dateText}>{date.toLocaleDateString()}</Text>
+        <Text style={styles.dateText}>{formatDateFr(date, "eeee d MMMM yyyy")}</Text>
       </TouchableOpacity>
 
       {/* DateTimePicker natif (iOS & Android) */}
@@ -237,7 +238,7 @@ export default function AddGameScreen({ navigation }: Props) {
             <Text style={styles.modalTitle}>Qui a le plus d'essences ?</Text>
             {/* Options de sélection */}
             {["A", "B", "equal"].map((value) => {
-              const label = value === "A" ? "Joueur A" : value === "B" ? "Joueur B" : "Égalité parfaite"
+              const label = value === "A" ? playerA : value === "B" ? playerB : "Égalité parfaite"
               const selected = winnerOnTie === value
               return (
                 <TouchableOpacity

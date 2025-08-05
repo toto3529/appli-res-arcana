@@ -9,7 +9,7 @@ import { useThemeStore } from "@stores/themeStore"
 export default function StatsScreen() {
   const { games } = useGameStore()
   const [tab, setTab] = useState<"month" | "global">("month")
-  const { isDark } = useThemeStore()
+  const isDark = useThemeStore((s) => s.isDark())
   const background = isDark ? "#000" : "#f9f9f9"
   const inactiveTabBackground = isDark ? "#222" : "#eaeaea"
   const inactiveTabText = isDark ? "#ccc" : "#333"

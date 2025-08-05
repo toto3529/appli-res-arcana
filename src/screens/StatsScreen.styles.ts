@@ -2,7 +2,7 @@ import { useThemeStore } from "@stores/themeStore"
 import { StyleSheet } from "react-native"
 
 export const useStatsStyles = () => {
-  const { isDark } = useThemeStore()
+  const isDark = useThemeStore((s) => s.isDark())
 
   const textMain = isDark ? "#fff" : "#000"
   const textSecondary = isDark ? "#ccc" : "#333"

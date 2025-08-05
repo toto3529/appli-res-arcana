@@ -1,15 +1,19 @@
-import { View, Text, ScrollView, Switch, Button, Alert, StyleSheet } from "react-native"
+import { View, Text, ScrollView, Switch, Button, Alert, StyleSheet, TextInput } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { useThemeStore } from "@stores/themeStore"
 import { useGameStore } from "@stores/gameStore"
+import { usePlayerStore } from "@stores/playerStore"
 
 export default function SettingsScreen() {
   const insets = useSafeAreaInsets()
 
-  const theme = useThemeStore((s) => s.effectiveTheme())
-  const isDark = theme === "dark"
+  const isDark = useThemeStore((s) => s.isDark())
   const setMode = useThemeStore((s) => s.setMode)
   const resetStats = useGameStore((s) => s.resetStats)
+  const playerA = usePlayerStore((s) => s.playerA)
+  const playerB = usePlayerStore((s) => s.playerB)
+  const setPlayerA = usePlayerStore((s) => s.setPlayerA)
+  const setPlayerB = usePlayerStore((s) => s.setPlayerB)
 
   const toggleTheme = () => {
     setMode(isDark ? "light" : "dark")
@@ -50,8 +54,19 @@ export default function SettingsScreen() {
 
       {/* Bloc 2 - Infos joueurs (mock) */}
       <View style={[styles.block, { backgroundColor: isDark ? "#18181b" : "#e4e4e7" }]}>
-        <Text style={[styles.blockText, { color: isDark ? "#fff" : "#000" }]}>👤 Joueur 1 : Toto</Text>
-        <Text style={[styles.blockText, { color: isDark ? "#fff" : "#000" }]}>👤 Joueur 2 : Lulu</Text>
+        <Text style={[styles.blockLabel, { color: isDark ? "#fff" : "#000", marginBottom: 8 }]}>👤 Nom des joueurs</Text>
+        <TextInput
+          placeholder="A"
+          value={playerA}
+          onChangeText={setPlayerA}
+          style={[styles.input, { backgroundColor: isDark ? "#2a2a2a" : "#fff", color: isDark ? "#fff" : "#000" }]}
+        />
+        <TextInput
+          placeholder="B"
+          value={playerB}
+          onChangeText={setPlayerB}
+          style={[styles.input, { backgroundColor: isDark ? "#2a2a2a" : "#fff", color: isDark ? "#fff" : "#000" }]}
+        />
       </View>
 
       {/* Bloc 3 - Import CSV */}
@@ -91,5 +106,12 @@ const styles = StyleSheet.create({
   blockText: {
     fontSize: 15,
     marginBottom: 4,
+  },
+  input: {
+    borderRadius: 8,
+    padding: 10,
+    marginBottom: 8,
+    borderWidth: 1,
+    borderColor: "#ccc",
   },
 })

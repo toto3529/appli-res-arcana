@@ -11,6 +11,7 @@ import AddGameScreen from "src/screens/AddGameScreen"
 import StatsScreen from "src/screens/StatsScreen"
 import SettingsScreen from "src/screens/SettingsScreen"
 import EditGameScreen from "src/screens/EditGameScreen"
+import { useThemeStore } from "@stores/themeStore"
 
 // Stack Home + AddGame, typé avec RootStackParamList
 const HomeStack = createNativeStackNavigator<RootStackParamList>()
@@ -48,9 +49,21 @@ function SettingsStackNavigator() {
 const Tab = createBottomTabNavigator<RootTabParamList>()
 
 export default function MainNavigation() {
+  const isDark = useThemeStore((s) => s.isDark())
   return (
     <NavigationContainer>
-      <Tab.Navigator initialRouteName="HomeTab" screenOptions={{ headerShown: false }}>
+      <Tab.Navigator
+        initialRouteName="HomeTab"
+        screenOptions={{
+          headerShown: false,
+          tabBarStyle: {
+            backgroundColor: isDark ? "#000" : "#fff",
+            borderTopColor: isDark ? "#111" : "#ccc",
+          },
+          tabBarActiveTintColor: isDark ? "#fff" : "#000",
+          tabBarInactiveTintColor: isDark ? "#888" : "#777",
+        }}
+      >
         <Tab.Screen name="HomeTab" component={HomeStackNavigator} options={{ title: "Home" }} />
         <Tab.Screen name="StatsTab" component={StatsStackNavigator} options={{ title: "Stats" }} />
         <Tab.Screen name="SettingsTab" component={SettingsStackNavigator} options={{ title: "Settings" }} />
