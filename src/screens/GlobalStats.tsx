@@ -26,13 +26,9 @@ export const GlobalStats = ({ games }: Props) => {
 
       {/* Plus grande série de victoires */}
       <View style={sharedStyles.block}>
-        <Text style={sharedStyles.blockTitle}>Plus grande série de victoire Joueur A :</Text>
-        <Text style={sharedStyles.blockText}>{stats.longestStreakA}</Text>
-      </View>
-
-      <View style={sharedStyles.block}>
-        <Text style={sharedStyles.blockTitle}>Plus grande série de victoire Joueur B :</Text>
-        <Text style={sharedStyles.blockText}>{stats.longestStreakB}</Text>
+        <Text style={sharedStyles.blockTitle}>Plus grande série de victoire :</Text>
+        <Text style={sharedStyles.blockText}>Joueur A : {stats.longestStreakA}</Text>
+        <Text style={sharedStyles.blockText}>Joueur B : {stats.longestStreakB}</Text>
       </View>
 
       {/* Nombre total de parties + % victoires */}
@@ -64,6 +60,12 @@ export const GlobalStats = ({ games }: Props) => {
             <Text style={sharedStyles.blockText}>{stats.avgScoreB} pts</Text>
           </View>
         </View>
+      </View>
+
+      {/* Donut Chart Placeholder */}
+      <View style={sharedStyles.block}>
+        <Text style={sharedStyles.blockTitle}>📊 Donut répartitions V/D</Text>
+        <Text style={sharedStyles.blockText}>[À intégrer plus tard]</Text>
       </View>
 
       {/* Meilleure victoire */}
