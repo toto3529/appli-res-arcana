@@ -18,6 +18,7 @@ interface GameState {
   addGame: (game: Omit<Game, "id">) => Promise<void>
   updateGame: (id: string, newA: number, newB: number, winnerOnTie?: "A" | "B" | "equal" | null) => Promise<void>
   deleteGame: (id: string) => Promise<void>
+  resetStats: () => Promise<void>
 }
 
 // Création du store
@@ -83,6 +84,17 @@ export const useGameStore = create<GameState>((set, get) => ({
       await record.markAsDeleted()
     })
     // On recharge la liste pour rafraîchir l’écran
+    await get().loadGames()
+  },
+
+  // Supprime toutes les parties
+  resetStats: async () => {
+    await database.write(async () => {
+      const allGames = await database.get<GameModel>("games").query().fetch()
+      for (const game of allGames) {
+        await game.markAsDeleted() // soft-delete
+      }
+    })
     await get().loadGames()
   },
 }))

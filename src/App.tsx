@@ -1,42 +1,46 @@
-import { LogBox } from "react-native"
+import { ActivityIndicator, LogBox, View } from "react-native"
 // Ignore ce warning précis
 LogBox.ignoreLogs(["Text strings must be rendered within a <Text> component"])
-import { useEffect } from "react"
+
 import { StatusBar } from "expo-status-bar"
 import { SafeAreaProvider } from "react-native-safe-area-context"
 import { DatabaseProvider } from "@nozbe/watermelondb/react"
 import { database } from "./db/database"
-import { useGameStore } from "./stores/gameStore"
-import { usePlayerStore } from "./stores/playerStore"
 import MainNavigation from "./navigation/MainNavigation"
 import { GestureHandlerRootView } from "react-native-gesture-handler"
+import { useThemeStore } from "@stores/themeStore"
+import { useEffect, useState } from "react"
 
 export default function App() {
-  // const loadGames = useGameStore((s) => s.loadGames)
-  // const games = useGameStore((s) => s.games)
-  // const playerA = usePlayerStore((s) => s.playerA)
-  // const playerB = usePlayerStore((s) => s.playerB)
+  const loadTheme = useThemeStore((s) => s.loadTheme)
+  const theme = useThemeStore((s) => s.mode)
 
-  // useEffect(() => {
-  //   loadGames()
-  // }, [])
+  const [isReady, setIsReady] = useState(false)
 
-  // useEffect(() => {
-  //   console.log("🗃️ games state changed:", games)
-  // }, [games])
+  useEffect(() => {
+    const init = async () => {
+      await loadTheme()
+      setIsReady(true)
+    }
+    init()
+  }, [])
 
-  // useEffect(() => {
-  //   console.log("🏷️ Players:", { playerA, playerB })
-  // }, [playerA, playerB])
+  if (!isReady) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "#000" }}>
+        <ActivityIndicator size="large" color="#fff" />
+      </View>
+    )
+  }
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      {" "}
-      {/* ← wrapper ajouté */}
       <SafeAreaProvider>
         <DatabaseProvider database={database}>
-          <MainNavigation />
-          <StatusBar style="auto" />
+          <View style={{ flex: 1, backgroundColor: theme === "dark" ? "#000" : "#fff" }}>
+            <MainNavigation />
+            <StatusBar style={theme === "dark" ? "light" : "dark"} />
+          </View>
         </DatabaseProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>

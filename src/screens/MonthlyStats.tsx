@@ -161,5 +161,3 @@ const MonthlyStats = ({ games }: Props) => {
 }
 
 export default MonthlyStats
-
-const styles = StyleSheet.create({})
