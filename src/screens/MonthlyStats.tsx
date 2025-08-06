@@ -45,7 +45,7 @@ const MonthlyStats = ({ games }: Props) => {
         <ActivityIndicator size="large" color="#fff" />
       ) : (
         <View style={sharedStyles.blocksWrapper}>
-          {filteredGames.length < 5 ? (
+          {filteredGames.length < 2 ? (
             <Text style={sharedStyles.warning}>Pas assez de parties enregistrées.</Text>
           ) : (
             <>

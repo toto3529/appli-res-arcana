@@ -216,11 +216,11 @@ export default function AddGameScreen({ navigation }: Props) {
       {showPicker && <DateTimePicker value={date} mode="date" display="default" onChange={onChangeDate} />}
 
       {/* Saisie du score pour le joueur A */}
-      <Text style={styles.label}>{playerA || "Joueur A"} – Score :</Text>
+      <Text style={styles.label}>{playerA} – Score :</Text>
       <TextInput style={styles.input} keyboardType="numeric" value={scoreA} onChangeText={setScoreA} placeholder="" />
 
       {/* Saisie du score pour le joueur B */}
-      <Text style={styles.label}>{playerB || "Joueur B"} – Score :</Text>
+      <Text style={styles.label}>{playerB} – Score :</Text>
       <TextInput style={styles.input} keyboardType="numeric" value={scoreB} onChangeText={setScoreB} placeholder="" />
 
       {/* Bouton de validation, désactivé si l’un des champs est vide */}

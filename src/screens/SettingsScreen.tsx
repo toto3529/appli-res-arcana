@@ -1,8 +1,9 @@
-import { View, Text, ScrollView, Switch, Button, Alert, StyleSheet, TextInput } from "react-native"
+import { View, Text, ScrollView, Switch, Button, Alert, StyleSheet, TextInput, TouchableOpacity } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { useThemeStore } from "@stores/themeStore"
 import { useGameStore } from "@stores/gameStore"
 import { usePlayerStore } from "@stores/playerStore"
+import { exportGamesToCSV } from "@utils/exportGamesToCSV"
 
 export default function SettingsScreen() {
   const insets = useSafeAreaInsets()
@@ -10,6 +11,8 @@ export default function SettingsScreen() {
   const isDark = useThemeStore((s) => s.isDark())
   const setMode = useThemeStore((s) => s.setMode)
   const resetStats = useGameStore((s) => s.resetStats)
+  const games = useGameStore((s) => s.games)
+
   const playerA = usePlayerStore((s) => s.playerA)
   const playerB = usePlayerStore((s) => s.playerB)
   const setPlayerA = usePlayerStore((s) => s.setPlayerA)
@@ -75,9 +78,20 @@ export default function SettingsScreen() {
       </View>
 
       {/* Bloc 4 - Export CSV */}
-      <View style={[styles.block, { backgroundColor: isDark ? "#18181b" : "#e4e4e7" }]}>
-        <Button title="📤 Export save (.csv)" onPress={() => Alert.alert("Info", "Fonctionnalité à venir")} />
-      </View>
+      <TouchableOpacity
+        style={[styles.block, { backgroundColor: isDark ? "#18181b" : "#e4e4e7" }]}
+        onPress={async () => {
+          try {
+            const path = await exportGamesToCSV(games)
+            Alert.alert("✅ CSV généré", `Fichier sauvegardé avec succès !\n\n📁 Chemin :\n${path}`, [{ text: "OK", style: "default" }])
+          } catch (err: any) {
+            Alert.alert("❌ Erreur", err.message || "Une erreur est survenue.")
+          }
+        }}
+      >
+        <Text style={[styles.blockTitle, { color: isDark ? "#fff" : "#000" }]}>📤 Export CSV</Text>
+        <Text style={[styles.blockText, { color: isDark ? "#fff" : "#000" }]}>Sauvegarder vos parties dans un fichier CSV</Text>
+      </TouchableOpacity>
 
       {/* Bloc 5 - Reset stats */}
       <View style={[styles.block, { backgroundColor: isDark ? "#18181b" : "#e4e4e7" }]}>
@@ -113,5 +127,11 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     borderWidth: 1,
     borderColor: "#ccc",
+  },
+  blockTitle: {
+    fontSize: 16,
+    fontWeight: "bold",
+    marginBottom: 4,
+    color: "#fff",
   },
 })

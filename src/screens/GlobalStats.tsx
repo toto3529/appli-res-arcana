@@ -14,7 +14,7 @@ export const GlobalStats = ({ games }: Props) => {
   const sharedStyles = useStatsStyles()
   const { playerA, playerB } = usePlayerStore()
 
-  if (games.length < 5) {
+  if (games.length < 2) {
     return (
       <View style={sharedStyles.container}>
         <Text style={sharedStyles.title}>🌍 Stats globales</Text>
