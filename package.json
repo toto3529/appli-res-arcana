@@ -1,7 +1,7 @@
 {
   "name": "appli-res-arcana",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "index.ts",
   "scripts": {
     "start": "expo start --dev-client",
     "android": "expo run:android",
@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@expo/metro-runtime": "~5.0.4",
+    "@expo/vector-icons": "^14.1.0",
     "@nozbe/watermelondb": "^0.28.0",
     "@react-native-async-storage/async-storage": "2.1.2",
     "@react-native-community/datetimepicker": "8.4.1",
@@ -27,10 +28,9 @@
     "react": "19.0.0",
     "react-dom": "19.0.0",
     "react-native": "0.79.5",
-    "react-native-fs": "^2.20.0",
     "react-native-gesture-handler": "~2.24.0",
-    "react-native-safe-area-context": "^5.5.2",
-    "react-native-screens": "^4.13.1",
+    "react-native-safe-area-context": "5.4.0",
+    "react-native-screens": "~4.11.1",
     "react-native-sqlite-storage": "^6.0.1",
     "react-native-swipe-list-view": "^3.2.9",
     "react-native-web": "^0.20.0",
@@ -42,8 +42,11 @@
     "@babel/core": "^7.25.2",
     "@babel/plugin-proposal-class-properties": "^7.18.6",
     "@babel/plugin-proposal-decorators": "^7.28.0",
+    "@expo/config-plugins": "~10.1.1",
+    "@expo/prebuild-config": "~9.0.0",
     "@types/react": "~19.0.10",
     "@types/uuid": "^10.0.0",
+    "eas-cli": "^16.17.4",
     "patch-package": "^8.0.0",
     "prettier": "^3.6.2",
     "prettier-plugin-tailwindcss": "^0.6.14",
@@ -52,7 +55,25 @@
   "private": true,
   "pnpm": {
     "overrides": {
-      "ws": "^8.13.0"
+      "ws": "^8.13.0",
+      "@expo/config-plugins": "~10.1.1",
+      "@expo/prebuild-config": "~9.0.0"
+    },
+    "onlyBuiltDependencies": [
+      "dtrace-provider"
+    ]
+  },
+  "expo": {
+    "doctor": {
+      "reactNativeDirectoryCheck": {
+        "exclude": [
+          "react-native-sqlite-storage",
+          "react-native-swipe-list-view",
+          "uuid",
+          "react-native-worklets",
+          "@nozbe/watermelondb"
+        ]
+      }
     }
   }
 }

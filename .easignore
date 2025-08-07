@@ -1,0 +1,62 @@
+# Ignorer node_modules (Expo installe les deps automatiquement)
+node_modules/
+
+# Dossiers spécifiques à Expo ou Metro
+.expo/
+.expo-shared/
+dist/
+web-build/
+.expo-env/
+
+
+
+# Metro
+.metro-cache/
+metro.config.js
+
+# Fichiers de logs et de debug
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+pnpm-debug.*
+
+# macOS / systèmes
+.DS_Store
+
+# Fichiers de clés, certificats ou sensibles
+*.jks
+*.keystore
+*.p8
+*.p12
+*.key
+*.pem
+*.mobileprovision
+
+# Fichiers d'environnement locaux
+.env*
+!.env.example
+
+# TypeScript
+*.tsbuildinfo
+
+# VS Code / IDE
+.vscode/
+.idea/
+
+# Archives générées localement
+*.tar.gz
+*.apk
+*.aab
+*.zip
+
+# Dossiers tests (si non nécessaires au build)
+__tests__/
+coverage/
+
+# Fichiers inutiles pour le build EAS
+README.md
+.gitignore
+.git/
+
+/android
+/ios

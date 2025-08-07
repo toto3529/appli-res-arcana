@@ -12,6 +12,7 @@ import StatsScreen from "src/screens/StatsScreen"
 import SettingsScreen from "src/screens/SettingsScreen"
 import EditGameScreen from "src/screens/EditGameScreen"
 import { useThemeStore } from "@stores/themeStore"
+import { Ionicons } from "@expo/vector-icons"
 
 // Stack Home + AddGame, typé avec RootStackParamList
 const HomeStack = createNativeStackNavigator<RootStackParamList>()
@@ -54,7 +55,7 @@ export default function MainNavigation() {
     <NavigationContainer>
       <Tab.Navigator
         initialRouteName="HomeTab"
-        screenOptions={{
+        screenOptions={({ route }) => ({
           headerShown: false,
           tabBarStyle: {
             backgroundColor: isDark ? "#000" : "#fff",
@@ -62,7 +63,17 @@ export default function MainNavigation() {
           },
           tabBarActiveTintColor: isDark ? "#fff" : "#000",
           tabBarInactiveTintColor: isDark ? "#888" : "#777",
-        }}
+          tabBarIcon: ({ color, size }) => {
+            let iconName: string
+
+            if (route.name === "HomeTab") iconName = "home-outline"
+            else if (route.name === "StatsTab") iconName = "bar-chart-outline"
+            else if (route.name === "SettingsTab") iconName = "settings-outline"
+            else iconName = "ellipse-outline"
+
+            return <Ionicons name={iconName as keyof typeof Ionicons.glyphMap} size={size} color={color} />
+          },
+        })}
       >
         <Tab.Screen name="HomeTab" component={HomeStackNavigator} options={{ title: "Home" }} />
         <Tab.Screen name="StatsTab" component={StatsStackNavigator} options={{ title: "Stats" }} />

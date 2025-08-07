@@ -67,7 +67,7 @@ export default function SettingsScreen() {
           style={[styles.input, { backgroundColor: isDark ? "#2a2a2a" : "#fff", color: isDark ? "#fff" : "#000" }]}
         />
         <TextInput
-          placeholder="B"
+          placeholder="Bfdgdfgdfgd"
           value={playerB}
           onChangeText={setPlayerB}
           style={[styles.input, { backgroundColor: isDark ? "#2a2a2a" : "#fff", color: isDark ? "#fff" : "#000" }]}
