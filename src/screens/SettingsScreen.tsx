@@ -4,6 +4,7 @@ import { useThemeStore } from "@stores/themeStore"
 import { useGameStore } from "@stores/gameStore"
 import { usePlayerStore } from "@stores/playerStore"
 import { exportGamesToCSV } from "@utils/exportGamesToCSV"
+import { importGamesFromCSV } from "@utils/importGamesFromCSV"
 
 export default function SettingsScreen() {
   const insets = useSafeAreaInsets()
@@ -11,7 +12,8 @@ export default function SettingsScreen() {
   const isDark = useThemeStore((s) => s.isDark())
   const setMode = useThemeStore((s) => s.setMode)
   const resetStats = useGameStore((s) => s.resetStats)
-  const games = useGameStore((s) => s.games)
+  const rawGames = useGameStore((state) => state.games)
+  const games = rawGames.filter((g) => g.id !== "__placeholder__")
 
   const playerA = usePlayerStore((s) => s.playerA)
   const playerB = usePlayerStore((s) => s.playerB)
@@ -74,24 +76,23 @@ export default function SettingsScreen() {
 
       {/* Bloc 3 - Import CSV */}
       <View style={[styles.block, { backgroundColor: isDark ? "#18181b" : "#e4e4e7" }]}>
-        <Button title="📥 Import save (.csv)" onPress={() => Alert.alert("Info", "Fonctionnalité à venir")} />
+        <Button
+          title="📥 Import save (.csv)"
+          onPress={async () => {
+            await importGamesFromCSV()
+          }}
+        />
       </View>
 
       {/* Bloc 4 - Export CSV */}
-      <TouchableOpacity
-        style={[styles.block, { backgroundColor: isDark ? "#18181b" : "#e4e4e7" }]}
-        onPress={async () => {
-          try {
-            const path = await exportGamesToCSV(games)
-            Alert.alert("✅ CSV généré", `Fichier sauvegardé avec succès !\n\n📁 Chemin :\n${path}`, [{ text: "OK", style: "default" }])
-          } catch (err: any) {
-            Alert.alert("❌ Erreur", err.message || "Une erreur est survenue.")
-          }
-        }}
-      >
-        <Text style={[styles.blockTitle, { color: isDark ? "#fff" : "#000" }]}>📤 Export CSV</Text>
-        <Text style={[styles.blockText, { color: isDark ? "#fff" : "#000" }]}>Sauvegarder vos parties dans un fichier CSV</Text>
-      </TouchableOpacity>
+      <View style={[styles.block, { backgroundColor: isDark ? "#18181b" : "#e4e4e7" }]}>
+        <Button
+          title="📤 Export save (.csv)"
+          onPress={async () => {
+            await exportGamesToCSV(games)
+          }}
+        />
+      </View>
 
       {/* Bloc 5 - Reset stats */}
       <View style={[styles.block, { backgroundColor: isDark ? "#18181b" : "#e4e4e7" }]}>

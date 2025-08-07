@@ -12,7 +12,8 @@ import { usePlayerStore } from "@stores/playerStore"
 type Props = NativeStackScreenProps<RootStackParamList, "HomeMain">
 
 export default function HomeScreen({ navigation }: Props) {
-  const games = useGameStore((s) => s.games)
+  const rawGames = useGameStore((state) => state.games)
+  const games = rawGames.filter((g) => g.id !== "__placeholder__")
   const loadGames = useGameStore((s) => s.loadGames)
   const deleteGame = useGameStore((s) => s.deleteGame)
   const listRef = useRef<SwipeListView<any>>(null)
@@ -44,7 +45,6 @@ export default function HomeScreen({ navigation }: Props) {
   }
 
   const confirmDelete = (id: string) => {
-    console.log(" Suppression demandée pour :", id)
     Alert.alert("Supprimer la partie", "Voulez-vous vraiment supprimer cette partie ?", [
       { text: "Annuler", style: "cancel" },
       {

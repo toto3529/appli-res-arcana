@@ -92,9 +92,20 @@ export const useGameStore = create<GameState>((set, get) => ({
     await database.write(async () => {
       const allGames = await database.get<GameModel>("games").query().fetch()
       for (const game of allGames) {
-        await game.markAsDeleted() // soft-delete
+        await game.markAsDeleted()
       }
+
+      // ✅ Crée une game "fantôme" persistée en base
+      await database.get<GameModel>("games").create((game) => {
+        game._raw.id = "__placeholder__" // forcer un ID fixe
+        game.date = new Date(0)
+        game.scoreA = 0
+        game.scoreB = 0
+        game.winnerOnTie = null
+      })
     })
+
+    // Recharge depuis WatermelonDB (inclura la fake game)
     await get().loadGames()
   },
 }))

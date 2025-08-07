@@ -1,37 +1,27 @@
 import * as FileSystem from "expo-file-system"
 import { Game } from "@stores/gameStore"
-import { usePlayerStore } from "@stores/playerStore"
 import { format } from "date-fns"
 import { fr } from "date-fns/locale"
+import { Alert } from "react-native"
 
-export const exportGamesToCSV = async (games: Game[]): Promise<string> => {
+export const exportGamesToCSV = async (games: Game[]): Promise<string | null> => {
   try {
-    // Récupération des noms des joueurs
-    const playerA = usePlayerStore.getState().playerA
-    const playerB = usePlayerStore.getState().playerB
-
     // Génération du nom de fichier avec la date
-    const dateStr = format(new Date(), "yyyy-MM-dd", { locale: fr })
+    const dateStr = format(new Date(), "yyyy-MM-dd_HH-mm-ss", { locale: fr })
     const fileName = `res-arcana-games-${dateStr}.csv`
     const filePath = `${FileSystem.documentDirectory}${fileName}`
 
-    const csvHeader = "Date,Joueur A,Score A,Joueur B,Score B,Vainqueur\n"
+    const csvHeader = "ID,Date,Score A,Score B,Vainqueur\n"
 
-    const csvRows = games.map((g) => {
+    const filteredGames = games.filter((g) => g.id !== "__placeholder__")
+
+    const csvRows = filteredGames.map((g) => {
       const date = new Date(g.date).toLocaleDateString("fr-FR")
 
       const winner =
-        g.scoreA > g.scoreB
-          ? playerA
-          : g.scoreB > g.scoreA
-            ? playerB
-            : g.winnerOnTie === "A"
-              ? playerA
-              : g.winnerOnTie === "B"
-                ? playerB
-                : "Égalité parfaite"
+        g.scoreA > g.scoreB ? "A" : g.scoreB > g.scoreA ? "B" : g.winnerOnTie === "A" ? "A" : g.winnerOnTie === "B" ? "B" : "Égalité parfaite"
 
-      return `${date},${playerA},${g.scoreA},${playerB},${g.scoreB},${winner}`
+      return `${g.id},${date},${g.scoreA},${g.scoreB},${winner}`
     })
 
     const csvContent = csvHeader + csvRows.join("\n")
@@ -40,8 +30,10 @@ export const exportGamesToCSV = async (games: Game[]): Promise<string> => {
       encoding: FileSystem.EncodingType.UTF8,
     })
 
+    Alert.alert("✅ Export terminé", `Fichier sauvegardé avec succès !\n\n📁 Chemin :\n${fileName}`)
     return filePath
   } catch (error) {
-    throw new Error("Erreur lors de l'export CSV : " + (error as Error).message)
+    Alert.alert("❌ Erreur export", (error as Error).message || "Une erreur est survenue lors de l'export CSV.")
+    return null
   }
 }
