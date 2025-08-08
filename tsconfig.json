@@ -5,13 +5,7 @@
     "useDefineForClassFields": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "lib": [
-      "ES2020",
-      "DOM",
-      "DOM.Iterable",
-      "esnext",
-      "dom"
-    ],
+    "lib": ["ES2020", "DOM", "DOM.Iterable", "esnext", "dom"],
     "module": "ESNext",
     "skipLibCheck": true,
     "moduleResolution": "Bundler",
@@ -30,46 +24,19 @@
     "noUncheckedSideEffectImports": true,
     "baseUrl": "./",
     "paths": {
-      "@api/*": [
-        "src/api/*"
-      ],
-      "@assets/*": [
-        "src/assets/*"
-      ],
-      "@components/*": [
-        "src/components/*"
-      ],
-      "@hooks/*": [
-        "src/hooks/*"
-      ],
-      "@pages/*": [
-        "src/pages/*"
-      ],
-      "@services/*": [
-        "src/services/*"
-      ],
-      "@stores/*": [
-        "src/stores/*"
-      ],
-      "@ui/*": [
-        "src/components/ui/*"
-      ],
-      "@interfaces/*": [
-        "src/interfaces/*"
-      ],
-      "@schemas/*": [
-        "src/schemas/*"
-      ],
-      "@utils/*": [
-        "src/utils/*"
-      ],
-      "@enums/*": [
-        "src/enums/*"
-      ],
-      "@data/*": [
-        "src/data/*"
-      ]
+      "@api/*": ["src/api/*"],
+      "@assets/*": ["src/assets/*"],
+      "@components/*": ["src/components/*"],
+      "@hooks/*": ["src/hooks/*"],
+      "@pages/*": ["src/pages/*"],
+      "@services/*": ["src/services/*"],
+      "@stores/*": ["src/stores/*"],
+      "@ui/*": ["src/components/ui/*"],
+      "@interfaces/*": ["src/interfaces/*"],
+      "@schemas/*": ["src/schemas/*"],
+      "@utils/*": ["src/utils/*"],
+      "@enums/*": ["src/enums/*"],
+      "@data/*": ["src/data/*"]
     }
-  },
-  "extends": "expo/tsconfig.base"
+  }
 }
