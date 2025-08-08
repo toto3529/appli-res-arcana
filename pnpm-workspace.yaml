@@ -1,0 +1,9 @@
+packages:
+  - .
+
+publicHoistPattern:
+  - "*expo-modules-core"
+  - "*expo-modules-autolinking"
+  - "*babel-preset-expo"
+
+nodeLinker: hoisted

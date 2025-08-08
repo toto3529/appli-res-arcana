@@ -1,15 +1,12 @@
 {
   "cli": {
-    "version": ">= 3.0.0"
+    "version": ">= 3.22.1"
   },
   "build": {
-    "preview": {
+    "development": {
       "developmentClient": true,
-      "distribution": "internal"
-    },
-    "production": {
-      "developmentClient": false,
-      "distribution": "store"
+      "distribution": "internal",
+      "pnpm": "10.10.0"
     }
   }
 }
