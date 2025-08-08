@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "main": "index.ts",
   "scripts": {
+    "dev:android": "expo start --clear --dev-client --android",
     "start": "expo start --dev-client",
     "android": "expo run:android",
     "ios": "expo run:ios",
@@ -25,7 +26,6 @@
     "expo-modules-core": "^2.5.0",
     "expo-status-bar": "~2.2.3",
     "expo-system-ui": "~5.0.10",
-    "pnpm": "^10.14.0",
     "react": "19.0.0",
     "react-dom": "19.0.0",
     "react-native": "0.79.5",
