@@ -87,9 +87,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace 'com.anonymous.appliresarcana'
+    namespace 'com.antoine.appliresarcana'
     defaultConfig {
-        applicationId 'com.anonymous.appliresarcana'
+        applicationId 'com.antoine.appliresarcana'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

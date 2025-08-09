@@ -1,10 +1,13 @@
-import { View, Text, ScrollView, Switch, Button, Alert, StyleSheet, TextInput, TouchableOpacity } from "react-native"
+import { View, Text, ScrollView, Switch, Button, Alert, StyleSheet, TextInput } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { useThemeStore } from "@stores/themeStore"
 import { useGameStore } from "@stores/gameStore"
 import { usePlayerStore } from "@stores/playerStore"
 import { exportGamesToCSV } from "@utils/exportGamesToCSV"
 import { importGamesFromCSV } from "@utils/importGamesFromCSV"
+import { useCallback, useEffect, useState } from "react"
+import { getCurrentSafDir, resetSafLocation } from "@utils/safStorage"
+import { useFocusEffect } from "@react-navigation/native"
 
 export default function SettingsScreen() {
   const insets = useSafeAreaInsets()
@@ -19,6 +22,18 @@ export default function SettingsScreen() {
   const playerB = usePlayerStore((s) => s.playerB)
   const setPlayerA = usePlayerStore((s) => s.setPlayerA)
   const setPlayerB = usePlayerStore((s) => s.setPlayerB)
+
+  const [currentPath, setCurrentPath] = useState<string | null>(null)
+
+  useEffect(() => {
+    getCurrentSafDir().then(setCurrentPath)
+  }, [])
+
+  useFocusEffect(
+    useCallback(() => {
+      getCurrentSafDir().then(setCurrentPath)
+    }, []),
+  )
 
   const toggleTheme = () => {
     setMode(isDark ? "light" : "dark")
@@ -36,6 +51,12 @@ export default function SettingsScreen() {
         },
       },
     ])
+  }
+
+  const handleResetFolder = async () => {
+    await resetSafLocation()
+    setCurrentPath(null)
+    Alert.alert("Réinitialisé", "Le dossier de sauvegarde sera redemandé au prochain export.")
   }
 
   return (
@@ -57,7 +78,7 @@ export default function SettingsScreen() {
         <Switch value={isDark} onValueChange={toggleTheme} />
       </View>
 
-      {/* Bloc 2 - Infos joueurs (mock) */}
+      {/* Bloc 2 - Infos joueurs */}
       <View style={[styles.block, { backgroundColor: isDark ? "#18181b" : "#e4e4e7" }]}>
         <Text style={[styles.blockLabel, { color: isDark ? "#fff" : "#000", marginBottom: 8 }]}>👤 Nom des joueurs</Text>
         <TextInput
@@ -89,12 +110,21 @@ export default function SettingsScreen() {
         <Button
           title="📤 Export save (.csv)"
           onPress={async () => {
-            await exportGamesToCSV(games)
+            const dir = await exportGamesToCSV(games)
+            if (dir) setCurrentPath(dir)
           }}
         />
       </View>
 
-      {/* Bloc 5 - Reset stats */}
+      {/* Bloc 5 - Reset dossier sauvegarde */}
+      <View style={[styles.block, { backgroundColor: isDark ? "#18181b" : "#e4e4e7" }]}>
+        <Button title="♻️ Réinitialiser dossier" color="red" onPress={handleResetFolder} />
+        <Text style={{ color: isDark ? "#ccc" : "#333", fontSize: 12, marginTop: 8 }}>
+          {currentPath ? decodeURIComponent(currentPath) : "Aucun dossier défini"}
+        </Text>
+      </View>
+
+      {/* Bloc 6 - Reset stats */}
       <View style={[styles.block, { backgroundColor: isDark ? "#18181b" : "#e4e4e7" }]}>
         <Button title=" Reset stats" color="red" onPress={handleResetStats} />
       </View>
@@ -128,11 +158,5 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     borderWidth: 1,
     borderColor: "#ccc",
-  },
-  blockTitle: {
-    fontSize: 16,
-    fontWeight: "bold",
-    marginBottom: 4,
-    color: "#fff",
   },
 })
