@@ -139,6 +139,14 @@ android {
         ignoreAssetsPattern '!.svn:!.git:!.ds_store:!*.scc:!CVS:!thumbs.db:!picasa.ini:!*~'
     }
 }
+// Renommer automatiquement l'APK
+android.applicationVariants.all { variant ->
+    variant.outputs.all { output ->
+        def appName = "ResArcana" // <-- mets ici le nom que tu veux
+        def buildType = variant.buildType.name
+        output.outputFileName = "${appName}-${buildType}.apk"
+    }
+}
 
 // Apply static values from `gradle.properties` to the `android.packagingOptions`
 // Accepts values in comma delimited lists, example:
