@@ -1,7 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-  <!-- Thème principal edge-to-edge, simple et compatible -->
+  <!-- Thème principal utilisé après le splash -->
+  <style name="AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
+    <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
+    <item name="android:statusBarColor">@android:color/transparent</item>
+    <item name="android:navigationBarColor">@android:color/transparent</item>
+    <item name="android:windowTranslucentStatus">false</item>
+    <item name="android:windowTranslucentNavigation">false</item>
+    <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+  </style>
+
+  <!-- Variante edge-to-edge (si tu veux l’utiliser ailleurs) -->
   <style name="Theme.EdgeToEdge" parent="Theme.AppCompat.DayNight.NoActionBar">
     <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
     <item name="android:statusBarColor">@android:color/transparent</item>
@@ -19,3 +29,4 @@
   </style>
 
 </resources>
+

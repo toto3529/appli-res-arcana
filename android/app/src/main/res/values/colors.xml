@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Couleurs existantes -->
-    <color name="colorPrimary">#6200EE</color>
-    <color name="colorPrimaryDark">#3700B3</color>
-    <color name="colorAccent">#03DAC5</color>
+  <!-- Couleurs de base (garde-les si tu les utilises) -->
+  <color name="colorPrimary">#6200EE</color>
+  <color name="colorPrimaryDark">#3700B3</color>
+  <color name="colorAccent">#03DAC5</color>
 
-    <!-- Ajout pour l'écran de splash -->
-    <color name="splashscreen_background">#000000</color>
+  <!-- Splash -->
+  <color name="splashscreen_background">#000000</color>
+
+  <!-- Icône adaptative -->
+  <color name="iconBackground">#000000</color>
 </resources>
