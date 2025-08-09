@@ -1,4 +1,4 @@
-package com.anonymous.appliresarcana
+package com.antoine.appliresarcana
 
 import android.app.Application
 import android.content.res.Configuration
