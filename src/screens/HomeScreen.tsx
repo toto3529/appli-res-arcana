@@ -1,6 +1,6 @@
 import { useCallback, useRef } from "react"
 import { View, Text, TouchableOpacity, Button, Alert, StyleSheet, LayoutAnimation } from "react-native"
-import { useFocusEffect } from "@react-navigation/native"
+import { useFocusEffect, useIsFocused } from "@react-navigation/native"
 import { SwipeListView, SwipeRow } from "react-native-swipe-list-view"
 import { format } from "date-fns"
 import { useGameStore } from "@stores/gameStore"
@@ -19,6 +19,7 @@ export default function HomeScreen({ navigation }: Props) {
   const listRef = useRef<SwipeListView<any>>(null)
   const openRowRef = useRef<SwipeRow<any> | null>(null)
   const isDark = useThemeStore((s) => s.isDark())
+  const isFocused = useIsFocused()
   const { playerA, playerB } = usePlayerStore()
 
   const colors = {
@@ -198,7 +199,7 @@ export default function HomeScreen({ navigation }: Props) {
           keyExtractor={(item) => item.key}
           leftOpenValue={80}
           rightOpenValue={-80}
-          contentContainerStyle={{ paddingBottom: 100 }}
+          contentContainerStyle={{ paddingBottom: isFocused ? 100 : 0 }}
           onRowOpen={(rowKey, rowMap) => {
             if (openRowRef.current && openRowRef.current !== rowMap[rowKey]) {
               openRowRef.current.closeRow()
@@ -211,7 +212,7 @@ export default function HomeScreen({ navigation }: Props) {
 
             if (draw && item.winnerOnTie === "A") winA = true
             else if (draw && item.winnerOnTie === "B") winA = false
-            else if (draw && item.winnerOnTie === "equal") winA = null
+            else if (draw && item.winnerOnTie === "draw") winA = null
 
             return (
               <TouchableOpacity style={styles.rowFront} activeOpacity={1}>
@@ -257,10 +258,11 @@ export default function HomeScreen({ navigation }: Props) {
             </View>
           )}
         />
-
-        <View style={styles.addButtonContainer}>
-          <Button title="Ajouter une partie" onPress={() => navigation.navigate("AddGame")} />
-        </View>
+        {isFocused && (
+          <View style={styles.addButtonContainer}>
+            <Button title="Ajouter une partie" onPress={() => navigation.navigate("AddGame")} />
+          </View>
+        )}
       </View>
     </View>
   )

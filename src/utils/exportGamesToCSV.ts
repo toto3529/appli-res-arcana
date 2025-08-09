@@ -27,6 +27,7 @@ export const exportGamesToCSV = async (games: Game[]): Promise<string | null> =>
     const dateStr = format(new Date(), "yyyy-MM-dd_HH-mm-ss", { locale: fr })
     const fileName = `res-arcana-games-${dateStr}.csv`
     const header = "ID,Date,Score A,Score B,Vainqueur\n"
+
     const rows = games
       .filter((g) => g.id !== "__placeholder__")
       .map((g) => {

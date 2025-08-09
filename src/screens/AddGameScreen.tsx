@@ -41,7 +41,7 @@ export default function AddGameScreen({ navigation }: Props) {
   const [scoreA, setScoreA] = useState<string>("")
   const [scoreB, setScoreB] = useState<string>("")
   const [isModalVisible, setIsModalVisible] = useState(false)
-  const [winnerOnTie, setWinnerOnTie] = useState<"A" | "B" | "equal" | null>(null)
+  const [winnerOnTie, setWinnerOnTie] = useState<"A" | "B" | "draw" | null>(null)
 
   /**
    * onChangeDate :
@@ -237,13 +237,13 @@ export default function AddGameScreen({ navigation }: Props) {
           <View style={styles.modalContainer}>
             <Text style={styles.modalTitle}>Qui a le plus d'essences ?</Text>
             {/* Options de sélection */}
-            {["A", "B", "equal"].map((value) => {
+            {["A", "B", "draw"].map((value) => {
               const label = value === "A" ? playerA : value === "B" ? playerB : "Égalité parfaite"
               const selected = winnerOnTie === value
               return (
                 <TouchableOpacity
                   key={value}
-                  onPress={() => setWinnerOnTie(value as "A" | "B" | "equal")}
+                  onPress={() => setWinnerOnTie(value as "A" | "B" | "draw")}
                   style={[styles.modalOption, selected && styles.modalOptionSelected]}
                 >
                   <Text style={selected ? styles.modalOptionTextSelected : styles.modalOptionText}>{label}</Text>

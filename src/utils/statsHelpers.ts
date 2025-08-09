@@ -1,4 +1,5 @@
 import { Game } from "src/stores/gameStore"
+import { sanitizeGames } from "./gameFilters"
 
 export function getMonthLabel(date: Date): string {
   const mois = date.toLocaleString("fr-FR", { month: "long" })
@@ -14,7 +15,8 @@ export function getFilteredGamesByMonth(games: Game[], selectedDate: Date): Game
 }
 
 export function calculateMonthlyStats(games: Game[]) {
-  const totalGames = games.length
+  const safe = sanitizeGames(games)
+  const totalGames = safe.length
 
   let totalPointsA = 0
   let totalPointsB = 0
@@ -23,7 +25,7 @@ export function calculateMonthlyStats(games: Game[]) {
   let draws = 0
   let bestVictoryA = 0
   let bestVictoryB = 0
-  const lastResults: ("A" | "B" | "equal")[] = []
+  const lastResults: ("A" | "B" | "draw")[] = []
 
   games.forEach((g) => {
     totalPointsA += g.scoreA
@@ -46,7 +48,7 @@ export function calculateMonthlyStats(games: Game[]) {
         lastResults.push("B")
       } else {
         draws++
-        lastResults.push("equal")
+        lastResults.push("draw")
       }
     }
   })
@@ -78,11 +80,12 @@ export function calculateMonthlyStats(games: Game[]) {
   }
 }
 export function getCurrentWinStreak(games: Game[]) {
+  const safe = sanitizeGames(games)
   let count = 0
   let player: "A" | "B" | null = null
 
-  for (let i = games.length - 1; i >= 0; i--) {
-    const g = games[i]
+  for (let i = safe.length - 1; i >= 0; i--) {
+    const g = safe[i]
 
     // Déterminer le vainqueur
     let winner: "A" | "B" | null = null
@@ -116,7 +119,8 @@ export function getCurrentWinStreak(games: Game[]) {
 }
 
 export function calculateGlobalStats(games: Game[]) {
-  const totalGames = games.length
+  const safe = sanitizeGames(games)
+  const totalGames = safe.length
 
   let totalPointsA = 0
   let totalPointsB = 0

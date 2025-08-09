@@ -8,7 +8,7 @@ export interface Game {
   date: Date
   scoreA: number
   scoreB: number
-  winnerOnTie?: "A" | "B" | "equal" | null
+  winnerOnTie?: "A" | "B" | "draw" | null
 }
 
 // Définition du shape du store
@@ -16,7 +16,7 @@ interface GameState {
   games: Game[]
   loadGames: () => Promise<void>
   addGame: (game: Omit<Game, "id">) => Promise<void>
-  updateGame: (id: string, newA: number, newB: number, winnerOnTie?: "A" | "B" | "equal" | null) => Promise<void>
+  updateGame: (id: string, newA: number, newB: number, winnerOnTie?: "A" | "B" | "draw" | null) => Promise<void>
   deleteGame: (id: string) => Promise<void>
   resetStats: () => Promise<void>
 }
