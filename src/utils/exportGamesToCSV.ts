@@ -31,7 +31,7 @@ export const exportGamesToCSV = async (games: Game[]): Promise<string | null> =>
     const rows = games
       .filter((g) => g.id !== "__placeholder__")
       .map((g) => {
-        const date = new Date(g.date).toLocaleDateString("fr-FR")
+        const date = format(new Date(g.date), "dd/MM/yyyy HH:mm", { locale: fr })
         const winner =
           g.scoreA > g.scoreB ? "A" : g.scoreB > g.scoreA ? "B" : g.winnerOnTie === "A" ? "A" : g.winnerOnTie === "B" ? "B" : "Égalité parfaite"
         return `${g.id},${date},${g.scoreA},${g.scoreB},${winner}`

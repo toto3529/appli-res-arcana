@@ -1,5 +1,5 @@
 import { NavigationContainer } from "@react-navigation/native"
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"
+import { BottomTabBarButtonProps, createBottomTabNavigator } from "@react-navigation/bottom-tabs"
 import { createNativeStackNavigator } from "@react-navigation/native-stack"
 
 // Types de routes
@@ -13,6 +13,8 @@ import SettingsScreen from "src/screens/SettingsScreen"
 import EditGameScreen from "src/screens/EditGameScreen"
 import { useThemeStore } from "@stores/themeStore"
 import { Ionicons } from "@expo/vector-icons"
+import { Pressable, TouchableOpacity, View } from "react-native"
+import React from "react"
 
 // Stack Home + AddGame, typé avec RootStackParamList
 const HomeStack = createNativeStackNavigator<RootStackParamList>()
@@ -49,6 +51,26 @@ function SettingsStackNavigator() {
 // Bottom Tabs, typé avec RootTabParamList
 const Tab = createBottomTabNavigator<RootTabParamList>()
 
+// Désactivation de l'effet d'opacité sur le clic de tab-Nav
+const TabBarButton = (props: BottomTabBarButtonProps) => {
+  const { children, style, onPress, onLongPress, accessibilityRole, accessibilityState, accessibilityLabel, testID } = props
+  return (
+    <TouchableOpacity
+      onPress={onPress ?? undefined}
+      onLongPress={onLongPress ?? undefined}
+      accessibilityRole={accessibilityRole}
+      accessibilityState={accessibilityState}
+      accessibilityLabel={accessibilityLabel}
+      testID={testID}
+      activeOpacity={1} // pas d’effet d’opacité marqué
+      style={style as any} // évite une chipoterie de typing sur StyleProp
+    >
+      {children}
+    </TouchableOpacity>
+  )
+}
+TabBarButton.displayName = "TabBarButton"
+
 export default function MainNavigation() {
   const isDark = useThemeStore((s) => s.isDark())
   return (
@@ -63,9 +85,9 @@ export default function MainNavigation() {
           },
           tabBarActiveTintColor: isDark ? "#fff" : "#000",
           tabBarInactiveTintColor: isDark ? "#888" : "#777",
+          tabBarButton: (props) => <TabBarButton {...props} />,
           tabBarIcon: ({ color, size }) => {
             let iconName: string
-
             if (route.name === "HomeTab") iconName = "home-outline"
             else if (route.name === "StatsTab") iconName = "bar-chart-outline"
             else if (route.name === "SettingsTab") iconName = "settings-outline"

@@ -10,6 +10,16 @@ import { isRealGame } from "./gameFilters"
 
 const SAF_SUBDIR_KEY = "resarcana.saf.subdir.uri"
 
+const tryParse = (s: string) => {
+  // 1) on tente date + heure
+  let d = parse(s, "dd/MM/yyyy HH:mm", new Date(), { locale: fr })
+  if (!Number.isFinite(d.getTime())) {
+    // 2) fallback: ancienne version (date seule)
+    d = parse(s, "dd/MM/yyyy", new Date(), { locale: fr })
+  }
+  return d
+}
+
 export const importGamesFromCSV = async () => {
   try {
     let csvContent: string | null = null
@@ -92,7 +102,8 @@ export const importGamesFromCSV = async () => {
         const scoreBNum = parseInt(scoreB, 10)
         if (Number.isNaN(scoreANum) || Number.isNaN(scoreBNum)) continue
 
-        const parsedDate = parse(dateStr, "dd/MM/yyyy", new Date(), { locale: fr })
+        const parsedDate = tryParse(dateStr)
+        if (!Number.isFinite(parsedDate.getTime())) continue
 
         let winnerOnTie: "A" | "B" | "draw" | null = null
         if (scoreANum === scoreBNum) {
@@ -118,13 +129,10 @@ export const importGamesFromCSV = async () => {
         }
 
         const isAlreadyPresent = allGames.some((game) => {
-          const sameDay =
-            game.date.getDate() === parsedDate.getDate() &&
-            game.date.getMonth() === parsedDate.getMonth() &&
-            game.date.getFullYear() === parsedDate.getFullYear()
+          const sameInstant = new Date(game.date).getTime() === parsedDate.getTime()
           const sameScores = game.scoreA === scoreANum && game.scoreB === scoreBNum
           const sameWinner = (game.winnerOnTie ?? null) === winnerOnTie
-          return sameDay && sameScores && sameWinner
+          return sameInstant && sameScores && sameWinner
         })
         if (isAlreadyPresent) continue
 

@@ -10,7 +10,8 @@ interface Props {
 }
 
 export const GlobalStats = ({ games }: Props) => {
-  const stats = useMemo(() => calculateGlobalStats(games), [games])
+  const orderedGames = useMemo(() => [...games].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()), [games])
+  const stats = useMemo(() => calculateGlobalStats(orderedGames), [orderedGames])
   const sharedStyles = useStatsStyles()
   const { playerA, playerB } = usePlayerStore()
 

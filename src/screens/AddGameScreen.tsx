@@ -37,6 +37,7 @@ export default function AddGameScreen({ navigation }: Props) {
   const [date, setDate] = useState<Date>(new Date())
   // showPicker : contrôle l’affichage du DateTimePicker
   const [showPicker, setShowPicker] = useState<boolean>(false)
+  const [showTimePicker, setShowTimePicker] = useState<boolean>(false)
   // scoreA / scoreB : saisies utilisateurs (chaînes, pour TextInput)
   const [scoreA, setScoreA] = useState<string>("")
   const [scoreB, setScoreB] = useState<string>("")
@@ -53,7 +54,19 @@ export default function AddGameScreen({ navigation }: Props) {
     // Sur Android, masquer le picker dès qu’une date est choisie ou qu’on annule
     setShowPicker(Platform.OS === "ios")
     if (selectedDate) {
-      setDate(selectedDate)
+      const d = new Date(date)
+      d.setFullYear(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate())
+      setDate(d)
+    }
+  }
+
+  // Mets à jour jeure/minutes
+  const onChangeTime = (_event: any, selected?: Date) => {
+    setShowTimePicker(Platform.OS === "ios")
+    if (selected) {
+      const d = new Date(date)
+      d.setHours(selected.getHours(), selected.getMinutes(), 0, 0)
+      setDate(d)
     }
   }
 
@@ -214,6 +227,13 @@ export default function AddGameScreen({ navigation }: Props) {
 
       {/* DateTimePicker natif (iOS & Android) */}
       {showPicker && <DateTimePicker value={date} mode="date" display="default" onChange={onChangeDate} />}
+
+      {/* TimePicker choix heure/minutes */}
+      <Text style={[styles.label, { marginTop: 8 }]}>Heure :</Text>
+      <TouchableOpacity onPress={() => setShowTimePicker(true)}>
+        <Text style={styles.dateText}>{formatDateFr(date, "HH:mm")}</Text>
+      </TouchableOpacity>
+      {showTimePicker && <DateTimePicker value={date} mode="time" display="default" onChange={onChangeTime} />}
 
       {/* Saisie du score pour le joueur A */}
       <Text style={styles.label}>{playerA} – Score :</Text>
