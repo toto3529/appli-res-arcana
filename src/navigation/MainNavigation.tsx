@@ -13,8 +13,7 @@ import SettingsScreen from "src/screens/SettingsScreen"
 import EditGameScreen from "src/screens/EditGameScreen"
 import { useThemeStore } from "@stores/themeStore"
 import { Ionicons } from "@expo/vector-icons"
-import { Pressable, TouchableOpacity, View } from "react-native"
-import React from "react"
+import { TouchableOpacity } from "react-native"
 
 // Stack Home + AddGame, typé avec RootStackParamList
 const HomeStack = createNativeStackNavigator<RootStackParamList>()
