@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+  <!-- Thème principal edge-to-edge, simple et compatible -->
+  <style name="Theme.EdgeToEdge" parent="Theme.AppCompat.DayNight.NoActionBar">
+    <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
+    <item name="android:statusBarColor">@android:color/transparent</item>
+    <item name="android:navigationBarColor">@android:color/transparent</item>
+    <item name="android:windowTranslucentStatus">false</item>
+    <item name="android:windowTranslucentNavigation">false</item>
+    <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+  </style>
+
+  <!-- Thème de l'écran de splash référencé par le Manifest -->
+  <style name="Theme.App.SplashScreen" parent="Theme.EdgeToEdge">
+    <item name="android:windowBackground">@color/splashscreen_background</item>
+    <item name="android:statusBarColor">@android:color/transparent</item>
+    <item name="android:navigationBarColor">@android:color/transparent</item>
+  </style>
+
+</resources>
