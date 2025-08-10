@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { View, Text, TextInput, Button, StyleSheet, Alert, Modal, TouchableOpacity } from "react-native"
+import { View, Text, TextInput, Button, StyleSheet, Alert, Modal, TouchableOpacity, Platform } from "react-native"
 import DateTimePicker from "@react-native-community/datetimepicker"
 import { NativeStackScreenProps } from "@react-navigation/native-stack"
 import { RootStackParamList } from "src/navigation/types"
@@ -26,9 +26,10 @@ export default function EditGameScreen({ route, navigation }: Props) {
   const { id } = route.params
   const [game, setGame] = useState<GameModel | null>(null)
   const [date, setDate] = useState(new Date())
+  const [showDatePicker, setShowDatePicker] = useState(false)
+  const [showTimePicker, setShowTimePicker] = useState(false)
   const [scoreA, setScoreA] = useState("")
   const [scoreB, setScoreB] = useState("")
-  const [showPicker, setShowPicker] = useState(false)
   const [winnerOnTie, setWinnerOnTie] = useState<"A" | "B" | "draw" | null>(null)
   const [isModalVisible, setIsModalVisible] = useState(false)
   const { playerA, playerB } = usePlayerStore()
@@ -52,11 +53,30 @@ export default function EditGameScreen({ route, navigation }: Props) {
   }, [id])
 
   useEffect(() => {
-    if (game && game.scoreA === game.scoreB) {
-      // L'utilisateur n'a pas modifié les scores, mais on veut forcer la revalidation du winnerOnTie
+    const a = parseInt(scoreA, 10)
+    const b = parseInt(scoreB, 10)
+    if (!isNaN(a) && !isNaN(b) && a !== b && winnerOnTie !== null) {
       setWinnerOnTie(null)
     }
-  }, [game])
+  }, [scoreA, scoreB])
+
+  const onChangeDate = (_: any, selected?: Date) => {
+    setShowDatePicker(Platform.OS === "ios")
+    if (selected) {
+      const d = new Date(date)
+      d.setFullYear(selected.getFullYear(), selected.getMonth(), selected.getDate())
+      setDate(d)
+    }
+  }
+
+  const onChangeTime = (_: any, selected?: Date) => {
+    setShowTimePicker(Platform.OS === "ios")
+    if (selected) {
+      const d = new Date(date)
+      d.setHours(selected.getHours(), selected.getMinutes(), 0, 0)
+      setDate(d)
+    }
+  }
 
   const handleSubmit = async () => {
     if (!game) return
@@ -69,7 +89,7 @@ export default function EditGameScreen({ route, navigation }: Props) {
       return
     }
 
-    // Si égalité et pas encore de décision → bloquer
+    // Égalité sans décision -> demander via modale
     if (a === b && winnerOnTie === null) {
       setIsModalVisible(true)
       return
@@ -91,6 +111,16 @@ export default function EditGameScreen({ route, navigation }: Props) {
     container: { flex: 1, padding: 16, backgroundColor: colors.background },
     title: { fontSize: 22, fontWeight: "bold", marginBottom: 24, color: colors.text },
     label: { fontSize: 16, marginTop: 12, color: colors.text },
+    dateText: {
+      fontSize: 18,
+      paddingVertical: 8,
+      paddingHorizontal: 12,
+      backgroundColor: colors.inputBg,
+      borderRadius: 4,
+      marginTop: 4,
+      alignSelf: "flex-start",
+      color: colors.text,
+    },
     input: {
       borderWidth: 1,
       borderColor: colors.inputBorder,
@@ -175,20 +205,21 @@ export default function EditGameScreen({ route, navigation }: Props) {
     <View style={styles.container}>
       <Text style={styles.title}>Modifier la partie</Text>
 
+      {/* Date */}
       <Text style={styles.label}>Date de la partie :</Text>
-      <Button title={formatDateFr(date, "eeee d MMMM yyyy")} onPress={() => setShowPicker(true)} />
-      {showPicker && (
-        <DateTimePicker
-          value={date}
-          mode="date"
-          display="default"
-          onChange={(_, d) => {
-            if (d) setDate(d)
-            setShowPicker(false)
-          }}
-        />
-      )}
+      <TouchableOpacity onPress={() => setShowDatePicker(true)}>
+        <Text style={styles.dateText}>{formatDateFr(date, "eeee d MMMM yyyy")}</Text>
+      </TouchableOpacity>
+      {showDatePicker && <DateTimePicker value={date} mode="date" display="default" onChange={onChangeDate} />}
 
+      {/* Heure */}
+      <Text style={[styles.label, { marginTop: 8 }]}>Heure :</Text>
+      <TouchableOpacity onPress={() => setShowTimePicker(true)}>
+        <Text style={styles.dateText}>{formatDateFr(date, "HH:mm")}</Text>
+      </TouchableOpacity>
+      {showTimePicker && <DateTimePicker value={date} mode="time" display="default" onChange={onChangeTime} />}
+
+      {/* Scores */}
       <Text style={styles.label}>Score {playerA} :</Text>
       <TextInput style={styles.input} keyboardType="numeric" value={scoreA} onChangeText={setScoreA} />
 
@@ -202,10 +233,13 @@ export default function EditGameScreen({ route, navigation }: Props) {
       <View style={styles.buttonWrapper}>
         <Button title="Annuler" onPress={() => navigation.goBack()} />
       </View>
+
+      {/* Modale égalité */}
       <Modal visible={isModalVisible} transparent animationType="slide">
         <View style={styles.modalOverlay}>
           <View style={styles.modalContainer}>
             <Text style={styles.modalTitle}>Qui a le plus d'essences ?</Text>
+
             {/* Options de sélection */}
             {["A", "B", "draw"].map((value) => {
               const label = value === "A" ? playerA : value === "B" ? playerB : "Égalité parfaite"
