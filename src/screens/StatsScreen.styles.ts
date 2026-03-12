@@ -157,5 +157,73 @@ export const useStatsStyles = () => {
     blocksWrapper: {
       gap: 10,
     },
+    winRateBar: {
+      flexDirection: "row",
+      height: 28,
+      borderRadius: 6,
+      overflow: "hidden",
+      marginTop: 10,
+      marginBottom: 4,
+    },
+    winRateSegmentA: {
+      backgroundColor: "#4CAF50",
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    winRateSegmentDraw: {
+      backgroundColor: "#C9A84C",
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    winRateSegmentB: {
+      backgroundColor: "#e74c3c",
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    winRateSegmentText: {
+      fontSize: 11,
+      fontWeight: "bold",
+      color: "#000",
+    },
+    historyLetterWin: {
+      color: "#4CAF50",
+      fontSize: 16,
+      fontWeight: "bold",
+    },
+    historyLetterLoss: {
+      color: "#e74c3c",
+      fontSize: 16,
+      fontWeight: "bold",
+    },
+    historyLetterDraw: {
+      color: "#fff",
+      fontSize: 16,
+      fontWeight: "bold",
+    },
+    pieContainer: {
+      alignItems: "center",
+      justifyContent: "center",
+      marginTop: 10,
+    },
+    pieLegend: {
+      flexDirection: "row",
+      justifyContent: "center",
+      gap: 16,
+      marginTop: 12,
+    },
+    pieLegendItem: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 6,
+    },
+    pieLegendDot: {
+      width: 10,
+      height: 10,
+      borderRadius: 5,
+    },
+    pieLegendText: {
+      fontSize: 12,
+      color: "#ccc",
+    },
   })
 }

@@ -28,7 +28,7 @@ export default function HomeScreen({ navigation }: Props) {
     textSecondary: isDark ? "#ccc" : "#666",
     win: "green",
     loss: "red",
-    draw: "#888",
+    color: "#C9A84C",
     buttonBg: isDark ? "#111" : "#fff",
   }
 
@@ -131,9 +131,9 @@ export default function HomeScreen({ navigation }: Props) {
     },
     rowFrontDraw: {
       borderLeftWidth: 4,
-      borderLeftColor: "#888",
+      borderLeftColor: "#C9A84C",
       borderRightWidth: 4,
-      borderRightColor: "#888",
+      borderRightColor: "#C9A84C",
     },
     rowContent: {
       flexDirection: "row",
@@ -235,7 +235,7 @@ export default function HomeScreen({ navigation }: Props) {
       color: colors.loss,
     },
     draw: {
-      color: colors.draw,
+      color: "#C9A84C",
     },
     badge: {
       paddingHorizontal: 8,
@@ -250,7 +250,7 @@ export default function HomeScreen({ navigation }: Props) {
       backgroundColor: "#3a1a1a",
     },
     badgeDraw: {
-      backgroundColor: "#2a2a2a",
+      backgroundColor: "#3a2e0a",
     },
     badgeText: {
       fontSize: 12,
@@ -263,7 +263,7 @@ export default function HomeScreen({ navigation }: Props) {
       color: "#e74c3c",
     },
     badgeTextDraw: {
-      color: "#888",
+      color: "#C9A84C",
     },
   })
 

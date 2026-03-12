@@ -37,14 +37,14 @@ export default function StatsScreen() {
       alignItems: "center",
     },
     activeTab: {
-      backgroundColor: "#007bff",
+      backgroundColor: "#C9A84C",
     },
     tabText: {
       fontWeight: "bold",
       color: inactiveTabText,
     },
     activeTabText: {
-      color: "white",
+      color: "#000",
     },
     content: {
       padding: 16,

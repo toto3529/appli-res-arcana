@@ -4,6 +4,7 @@ import { Game } from "@stores/gameStore"
 import { calculateGlobalStats } from "@utils/statsHelpers"
 import { useStatsStyles } from "./StatsScreen.styles"
 import { usePlayerStore } from "@stores/playerStore"
+import PieChart from "@components/PieChart"
 
 interface Props {
   games: Game[]
@@ -18,7 +19,7 @@ export const GlobalStats = ({ games }: Props) => {
   if (games.length < 2) {
     return (
       <View style={sharedStyles.container}>
-        <Text style={sharedStyles.title}>🌍 Stats globales</Text>
+        <Text style={sharedStyles.title}>Stats globales</Text>
         <Text style={sharedStyles.blockText}>Encore trop peu de données pour le streak / moyenne.</Text>
       </View>
     )
@@ -26,7 +27,7 @@ export const GlobalStats = ({ games }: Props) => {
 
   return (
     <ScrollView contentContainerStyle={sharedStyles.container}>
-      <Text style={sharedStyles.title}>🌍 Stats globales</Text>
+      <Text style={sharedStyles.title}>Stats globales</Text>
 
       {/* Plus grande série de victoires */}
       <View style={sharedStyles.block}>
@@ -42,17 +43,33 @@ export const GlobalStats = ({ games }: Props) => {
       {/* Nombre total de parties + % victoires */}
       <View style={sharedStyles.block}>
         <Text style={sharedStyles.blockTitle}>Nombre de parties : {stats.totalGames}</Text>
+
+        <View style={sharedStyles.winRateBar}>
+          {stats.rawRateA > 0 && (
+            <View style={[sharedStyles.winRateSegmentA, { flex: stats.rawRateA }]}>
+              <Text style={sharedStyles.winRateSegmentText}>{stats.rawRateA}%</Text>
+            </View>
+          )}
+          {stats.drawRate > 0 && (
+            <View style={[sharedStyles.winRateSegmentDraw, { flex: stats.drawRate }]}>
+              <Text style={sharedStyles.winRateSegmentText}>{stats.drawRate}%</Text>
+            </View>
+          )}
+          {stats.rawRateB > 0 && (
+            <View style={[sharedStyles.winRateSegmentB, { flex: stats.rawRateB }]}>
+              <Text style={sharedStyles.winRateSegmentText}>{stats.rawRateB}%</Text>
+            </View>
+          )}
+        </View>
+
         <View style={sharedStyles.row}>
-          <View style={sharedStyles.column}>
-            <Text style={sharedStyles.blockSubtitle}>{playerA}</Text>
-            <Text style={sharedStyles.blockText}>{stats.rawRateA}%</Text>
+          <View style={sharedStyles.half}>
+            <Text style={sharedStyles.label}>{playerA}</Text>
           </View>
-          <View style={sharedStyles.column}>
-            <Text style={sharedStyles.blockSubtitle}>{playerB}</Text>
-            <Text style={sharedStyles.blockText}>{stats.rawRateB}%</Text>
+          <View style={sharedStyles.half}>
+            <Text style={[sharedStyles.label, { textAlign: "right" }]}>{playerB}</Text>
           </View>
         </View>
-        <Text style={sharedStyles.blockTextCenter}>Matchs nuls : {stats.drawRate}%</Text>
       </View>
 
       {/* Moyenne de points */}
@@ -70,10 +87,12 @@ export const GlobalStats = ({ games }: Props) => {
         </View>
       </View>
 
-      {/* Donut Chart Placeholder */}
+      {/* Donut Répartitions Victoires / Défaites */}
       <View style={sharedStyles.block}>
-        <Text style={sharedStyles.blockTitle}>📊 Donut répartitions V/D</Text>
-        <Text style={sharedStyles.blockText}>[À intégrer plus tard]</Text>
+        <Text style={sharedStyles.blockTitle}>Répartition Victoires / Défaites</Text>
+        <View style={sharedStyles.pieContainer}>
+          <PieChart valueA={stats.rawRateA} valueB={stats.rawRateB} valueDraw={stats.drawRate} labelA={playerA} labelB={playerB} />
+        </View>
       </View>
 
       {/* Meilleure victoire */}
@@ -82,11 +101,11 @@ export const GlobalStats = ({ games }: Props) => {
         <View style={sharedStyles.row}>
           <View style={sharedStyles.column}>
             <Text style={sharedStyles.blockSubtitle}>{playerA}</Text>
-            <Text style={sharedStyles.blockText}>{stats.bestVictoryA}</Text>
+            <Text style={sharedStyles.playerValue}>+ {stats.bestVictoryA} pts</Text>
           </View>
           <View style={sharedStyles.column}>
             <Text style={sharedStyles.blockSubtitle}>{playerB}</Text>
-            <Text style={sharedStyles.blockText}>{stats.bestVictoryB}</Text>
+            <Text style={sharedStyles.playerValue}>+ {stats.bestVictoryB} pts</Text>
           </View>
         </View>
       </View>
