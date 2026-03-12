@@ -72,15 +72,38 @@ export default function HomeScreen({ navigation }: Props) {
     },
     title: {
       textAlign: "center",
-      fontSize: 20,
-      fontWeight: "bold",
-      color: colors.textMain,
+      fontSize: 28,
+      fontWeight: "900",
+      color: "#C9A84C",
+      letterSpacing: 6,
+      textTransform: "uppercase",
+      marginBottom: 4,
     },
     subtitle: {
       textAlign: "center",
-      fontSize: 16,
-      marginBottom: 12,
+      fontSize: 13,
+      letterSpacing: 2,
+      textTransform: "uppercase",
+      marginBottom: 16,
       color: colors.textSecondary,
+    },
+    titleSeparator: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      marginBottom: 12,
+      gap: 8,
+    },
+    titleLine: {
+      height: 1,
+      width: 60,
+      backgroundColor: "#C9A84C",
+      opacity: 0.5,
+    },
+    titleDiamond: {
+      color: "#C9A84C",
+      fontSize: 10,
+      opacity: 0.8,
     },
     listWrapper: {
       flex: 1,
@@ -93,6 +116,24 @@ export default function HomeScreen({ navigation }: Props) {
       borderRadius: 4,
       overflow: "hidden",
       backgroundColor: colors.card,
+    },
+    rowFrontWinA: {
+      borderLeftWidth: 4,
+      borderLeftColor: "#4CAF50",
+      borderRightWidth: 4,
+      borderRightColor: "#e74c3c",
+    },
+    rowFrontWinB: {
+      borderLeftWidth: 4,
+      borderLeftColor: "#e74c3c",
+      borderRightWidth: 4,
+      borderRightColor: "#4CAF50",
+    },
+    rowFrontDraw: {
+      borderLeftWidth: 4,
+      borderLeftColor: "#888",
+      borderRightWidth: 4,
+      borderRightColor: "#888",
     },
     rowContent: {
       flexDirection: "row",
@@ -167,12 +208,25 @@ export default function HomeScreen({ navigation }: Props) {
       color: "#fff",
       fontWeight: "bold",
     },
-    addButtonContainer: {
+    fab: {
       position: "absolute",
-      bottom: 0,
-      width: "100%",
-      padding: 16,
-      backgroundColor: colors.buttonBg,
+      bottom: 24,
+      alignSelf: "center",
+      left: "50%",
+      marginLeft: -30,
+      width: 60,
+      height: 60,
+      borderRadius: 30,
+      backgroundColor: "#C9A84C",
+      justifyContent: "center",
+      alignItems: "center",
+      elevation: 8,
+    },
+    fabText: {
+      fontSize: 32,
+      color: "#000",
+      fontWeight: "bold",
+      lineHeight: 36,
     },
     win: {
       color: colors.win,
@@ -183,11 +237,44 @@ export default function HomeScreen({ navigation }: Props) {
     draw: {
       color: colors.draw,
     },
+    badge: {
+      paddingHorizontal: 8,
+      paddingVertical: 3,
+      borderRadius: 6,
+      marginTop: 4,
+    },
+    badgeWin: {
+      backgroundColor: "#1a3a1a",
+    },
+    badgeLoss: {
+      backgroundColor: "#3a1a1a",
+    },
+    badgeDraw: {
+      backgroundColor: "#2a2a2a",
+    },
+    badgeText: {
+      fontSize: 12,
+      fontWeight: "bold",
+    },
+    badgeTextWin: {
+      color: "#4CAF50",
+    },
+    badgeTextLoss: {
+      color: "#e74c3c",
+    },
+    badgeTextDraw: {
+      color: "#888",
+    },
   })
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>RES ARCANA</Text>
+      <View style={styles.titleSeparator}>
+        <View style={styles.titleLine} />
+        <Text style={styles.titleDiamond}>◆</Text>
+        <View style={styles.titleLine} />
+      </View>
       <Text style={styles.subtitle}>Dernières parties</Text>
 
       <View style={styles.listWrapper}>
@@ -214,14 +301,21 @@ export default function HomeScreen({ navigation }: Props) {
             else if (draw && item.winnerOnTie === "draw") winA = null
 
             return (
-              <TouchableOpacity style={styles.rowFront} activeOpacity={1}>
+              <TouchableOpacity
+                style={[styles.rowFront, winA === true ? styles.rowFrontWinA : winA === false ? styles.rowFrontWinB : styles.rowFrontDraw]}
+                activeOpacity={1}
+              >
                 <View style={styles.rowContent}>
                   {/* Joueur A */}
                   <View style={styles.playerBox}>
                     <Text style={styles.playerName}>{playerA}</Text>
-                    <Text style={[styles.status, winA === true ? styles.win : winA === false ? styles.loss : styles.draw]}>
-                      {winA === true ? "Victory ✅" : winA === false ? "Defeat ❌" : "Draw 🤝"}
-                    </Text>
+                    <View style={[styles.badge, winA === true ? styles.badgeWin : winA === false ? styles.badgeLoss : styles.badgeDraw]}>
+                      <Text
+                        style={[styles.badgeText, winA === true ? styles.badgeTextWin : winA === false ? styles.badgeTextLoss : styles.badgeTextDraw]}
+                      >
+                        {winA === true ? "Victory" : winA === false ? "Defeat" : "Draw"}
+                      </Text>
+                    </View>
                   </View>
 
                   {/* Score */}
@@ -235,9 +329,13 @@ export default function HomeScreen({ navigation }: Props) {
                   {/* Joueur B */}
                   <View style={styles.playerBox}>
                     <Text style={styles.playerName}>{playerB}</Text>
-                    <Text style={[styles.status, winA === false ? styles.win : winA === true ? styles.loss : styles.draw]}>
-                      {winA === false ? "Victory ✅" : winA === true ? "Defeat ❌" : "Draw 🤝"}
-                    </Text>
+                    <View style={[styles.badge, winA === false ? styles.badgeWin : winA === true ? styles.badgeLoss : styles.badgeDraw]}>
+                      <Text
+                        style={[styles.badgeText, winA === false ? styles.badgeTextWin : winA === true ? styles.badgeTextLoss : styles.badgeTextDraw]}
+                      >
+                        {winA === false ? "Victory" : winA === true ? "Defeat" : "Draw"}
+                      </Text>
+                    </View>
                   </View>
                 </View>
               </TouchableOpacity>
@@ -258,9 +356,9 @@ export default function HomeScreen({ navigation }: Props) {
           )}
         />
 
-        <View style={styles.addButtonContainer}>
-          <Button title="Ajouter une partie" onPress={() => navigation.navigate("AddGame")} />
-        </View>
+        <TouchableOpacity style={styles.fab} onPress={() => navigation.navigate("AddGame")}>
+          <Text style={styles.fabText}>+</Text>
+        </TouchableOpacity>
       </View>
     </View>
   )
