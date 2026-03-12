@@ -20,9 +20,11 @@ export const useStatsStyles = () => {
       flexGrow: 1,
     },
     title: {
-      fontSize: 20,
-      fontWeight: "bold",
-      color: textMain,
+      fontSize: 22,
+      fontWeight: "900",
+      color: "#C9A84C",
+      letterSpacing: 4,
+      textTransform: "uppercase",
       textAlign: "center",
       marginBottom: 12,
     },
@@ -152,7 +154,8 @@ export const useStatsStyles = () => {
     monthLabel: {
       fontSize: 18,
       fontWeight: "bold",
-      color: textMain,
+      color: "#C9A84C",
+      letterSpacing: 2,
     },
     blocksWrapper: {
       gap: 10,
@@ -196,7 +199,7 @@ export const useStatsStyles = () => {
       fontWeight: "bold",
     },
     historyLetterDraw: {
-      color: "#fff",
+      color: "#C9A84C",
       fontSize: 16,
       fontWeight: "bold",
     },

@@ -82,7 +82,7 @@ export default function MainNavigation() {
             backgroundColor: isDark ? "#000" : "#fff",
             borderTopColor: isDark ? "#111" : "#ccc",
           },
-          tabBarActiveTintColor: isDark ? "#fff" : "#000",
+          tabBarActiveTintColor: "#C9A84C",
           tabBarInactiveTintColor: isDark ? "#888" : "#777",
           tabBarButton: (props) => <TabBarButton {...props} />,
           tabBarIcon: ({ color, size }) => {
