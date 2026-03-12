@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-  <!-- Thème principal utilisé après le splash -->
   <style name="AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
     <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
     <item name="android:statusBarColor">@android:color/transparent</item>
@@ -11,7 +9,6 @@
     <item name="android:windowDrawsSystemBarBackgrounds">true</item>
   </style>
 
-  <!-- Variante edge-to-edge (si tu veux l’utiliser ailleurs) -->
   <style name="Theme.EdgeToEdge" parent="Theme.AppCompat.DayNight.NoActionBar">
     <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
     <item name="android:statusBarColor">@android:color/transparent</item>
@@ -21,12 +18,15 @@
     <item name="android:windowDrawsSystemBarBackgrounds">true</item>
   </style>
 
-  <!-- Thème de l'écran de splash référencé par le Manifest -->
   <style name="Theme.App.SplashScreen" parent="Theme.EdgeToEdge">
     <item name="android:windowBackground">@color/splashscreen_background</item>
     <item name="android:statusBarColor">@android:color/transparent</item>
     <item name="android:navigationBarColor">@android:color/transparent</item>
   </style>
 
+  <style name="BootTheme" parent="Theme.BootSplash">
+    <item name="bootSplashBackground">@color/bootsplash_background</item>
+    <item name="bootSplashLogo">@drawable/bootsplash_logo</item>
+    <item name="postBootSplashTheme">@style/AppTheme</item>
+  </style>
 </resources>
-

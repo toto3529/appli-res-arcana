@@ -5,6 +5,7 @@ import { Game } from "src/stores/gameStore"
 import { useStatsStyles } from "./StatsScreen.styles"
 import { usePlayerStore } from "@stores/playerStore"
 import PieChart from "@components/PieChart"
+import { useThemeStore } from "@stores/themeStore"
 
 interface Props {
   games: Game[]
@@ -14,6 +15,7 @@ const MonthlyStats = ({ games }: Props) => {
   const [currentMonthOffset, setCurrentMonthOffset] = useState(0)
   const sharedStyles = useStatsStyles()
   const { playerA, playerB } = usePlayerStore()
+  const isDark = useThemeStore((s) => s.isDark())
 
   const currentDate = useMemo(() => {
     const now = new Date()
@@ -34,11 +36,11 @@ const MonthlyStats = ({ games }: Props) => {
       {/* Sélection du mois */}
       <View style={sharedStyles.monthSelector}>
         <TouchableOpacity onPress={handlePrevMonth} style={sharedStyles.monthButton}>
-          <Text style={sharedStyles.monthButtonText}>←</Text>
+          <Text style={sharedStyles.monthButtonText}>{"<"}</Text>
         </TouchableOpacity>
         <Text style={sharedStyles.monthLabel}>{getMonthLabel(currentDate)}</Text>
         <TouchableOpacity onPress={handleNextMonth} style={sharedStyles.monthButton}>
-          <Text style={sharedStyles.monthButtonText}>→</Text>
+          <Text style={sharedStyles.monthButtonText}>{">"}</Text>
         </TouchableOpacity>
       </View>
 
@@ -112,7 +114,14 @@ const MonthlyStats = ({ games }: Props) => {
               <View style={sharedStyles.block}>
                 <Text style={sharedStyles.blockTitle}>Répartition Victoires / Défaites</Text>
                 <View style={sharedStyles.pieContainer}>
-                  <PieChart valueA={stats.winRateA} valueB={stats.winRateB} valueDraw={stats.drawRate} labelA={playerA} labelB={playerB} />
+                  <PieChart
+                    valueA={stats.winRateA}
+                    valueB={stats.winRateB}
+                    valueDraw={stats.drawRate}
+                    labelA={playerA}
+                    labelB={playerB}
+                    isDark={isDark}
+                  />
                 </View>
               </View>
 

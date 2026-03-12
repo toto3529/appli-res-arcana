@@ -7,6 +7,7 @@ interface Props {
   valueDraw: number
   labelA: string
   labelB: string
+  isDark: boolean
 }
 
 function polarToCartesian(cx: number, cy: number, r: number, angleDeg: number) {
@@ -30,7 +31,7 @@ function labelPosition(cx: number, cy: number, r: number, startAngle: number, en
   return polarToCartesian(cx, cy, r * 0.65, midAngle)
 }
 
-export default function PieChart({ valueA, valueB, valueDraw, labelA, labelB }: Props) {
+export default function PieChart({ valueA, valueB, valueDraw, labelA, labelB, isDark }: Props) {
   const total = valueA + valueB + valueDraw
   if (total === 0) return null
 
@@ -51,7 +52,7 @@ export default function PieChart({ valueA, valueB, valueDraw, labelA, labelB }: 
   const posB = labelPosition(cx, cy, r, startB, startB + angleB)
 
   return (
-    <View>
+    <View style={{ alignItems: "center" }}>
       <Svg width={160} height={160}>
         {valueA > 0 && <Path d={slicePath(cx, cy, r, startA, startA + angleA)} fill="#4CAF50" />}
         {valueDraw > 0 && <Path d={slicePath(cx, cy, r, startDraw, startDraw + angleDraw)} fill="#C9A84C" />}
@@ -79,7 +80,7 @@ export default function PieChart({ valueA, valueB, valueDraw, labelA, labelB }: 
         {valueA > 0 && (
           <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
             <View style={{ width: 10, height: 10, borderRadius: 5, backgroundColor: "#4CAF50" }} />
-            <Text style={{ fontSize: 12, color: "#ccc" }}>
+            <Text style={{ fontSize: 12, color: isDark ? "#ccc" : "#333" }}>
               {labelA} {valueA}%
             </Text>
           </View>
@@ -87,13 +88,13 @@ export default function PieChart({ valueA, valueB, valueDraw, labelA, labelB }: 
         {valueDraw > 0 && (
           <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
             <View style={{ width: 10, height: 10, borderRadius: 5, backgroundColor: "#C9A84C" }} />
-            <Text style={{ fontSize: 12, color: "#ccc" }}>Nuls {valueDraw}%</Text>
+            <Text style={{ fontSize: 12, color: isDark ? "#ccc" : "#333" }}>Nuls {valueDraw}%</Text>
           </View>
         )}
         {valueB > 0 && (
           <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
             <View style={{ width: 10, height: 10, borderRadius: 5, backgroundColor: "#e74c3c" }} />
-            <Text style={{ fontSize: 12, color: "#ccc" }}>
+            <Text style={{ fontSize: 12, color: isDark ? "#ccc" : "#333" }}>
               {labelB} {valueB}%
             </Text>
           </View>

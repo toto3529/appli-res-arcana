@@ -5,6 +5,7 @@ import { calculateGlobalStats } from "@utils/statsHelpers"
 import { useStatsStyles } from "./StatsScreen.styles"
 import { usePlayerStore } from "@stores/playerStore"
 import PieChart from "@components/PieChart"
+import { useThemeStore } from "@stores/themeStore"
 
 interface Props {
   games: Game[]
@@ -15,6 +16,7 @@ export const GlobalStats = ({ games }: Props) => {
   const stats = useMemo(() => calculateGlobalStats(orderedGames), [orderedGames])
   const sharedStyles = useStatsStyles()
   const { playerA, playerB } = usePlayerStore()
+  const isDark = useThemeStore((s) => s.isDark())
 
   if (games.length < 2) {
     return (
@@ -91,7 +93,7 @@ export const GlobalStats = ({ games }: Props) => {
       <View style={sharedStyles.block}>
         <Text style={sharedStyles.blockTitle}>Répartition Victoires / Défaites</Text>
         <View style={sharedStyles.pieContainer}>
-          <PieChart valueA={stats.rawRateA} valueB={stats.rawRateB} valueDraw={stats.drawRate} labelA={playerA} labelB={playerB} />
+          <PieChart valueA={stats.rawRateA} valueB={stats.rawRateB} valueDraw={stats.drawRate} labelA={playerA} labelB={playerB} isDark={isDark} />
         </View>
       </View>
 

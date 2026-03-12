@@ -1,5 +1,4 @@
-import { ActivityIndicator, LogBox, View } from "react-native"
-// Ignore ce warning précis
+import { LogBox, View } from "react-native"
 LogBox.ignoreLogs(["Text strings must be rendered within a <Text> component"])
 
 import { StatusBar } from "expo-status-bar"
@@ -11,6 +10,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler"
 import { useThemeStore } from "@stores/themeStore"
 import { useEffect, useState } from "react"
 import { usePlayerStore } from "@stores/playerStore"
+import BootSplash from "react-native-bootsplash"
 
 export default function App() {
   const loadTheme = useThemeStore((s) => s.loadTheme)
@@ -23,25 +23,12 @@ export default function App() {
       await loadTheme()
       await loadPlayers()
       setIsReady(true)
+      await BootSplash.hide({ fade: true })
     }
     init()
   }, [])
 
-  useEffect(() => {
-    const init = async () => {
-      await loadTheme()
-      setIsReady(true)
-    }
-    init()
-  }, [])
-
-  if (!isReady) {
-    return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "#000" }}>
-        <ActivityIndicator size="large" color="#fff" />
-      </View>
-    )
-  }
+  if (!isReady) return null
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
