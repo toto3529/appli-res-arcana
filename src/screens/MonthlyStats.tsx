@@ -165,11 +165,11 @@ const MonthlyStats = ({ games }: Props) => {
             <View style={styles.rowBetween}>
               <View style={styles.playerStat}>
                 <Text style={styles.playerName}>{playerA}</Text>
-                <Text style={styles.playerValue}>{stats.bestVictoryA} pts</Text>
+                <Text style={styles.blockText}>{stats.bestVictoryA} pts</Text>
               </View>
               <View style={styles.playerStat}>
                 <Text style={styles.playerName}>{playerB}</Text>
-                <Text style={styles.playerValue}>{stats.bestVictoryB} pts</Text>
+                <Text style={styles.blockText}>{stats.bestVictoryB} pts</Text>
               </View>
             </View>
           </View>
