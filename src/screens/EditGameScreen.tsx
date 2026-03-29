@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { View, Text, TextInput, Button, StyleSheet, Alert, Modal, TouchableOpacity, Platform } from "react-native"
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Modal, Platform, ScrollView } from "react-native"
 import DateTimePicker from "@react-native-community/datetimepicker"
 import { NativeStackScreenProps } from "@react-navigation/native-stack"
 import { RootStackParamList } from "src/navigation/types"
@@ -8,21 +8,12 @@ import GameModel from "src/models/GameModel"
 import { useThemeStore } from "@stores/themeStore"
 import { formatDateFr } from "@utils/formatDate"
 import { usePlayerStore } from "@stores/playerStore"
+import { useAppStyles } from "src/styles/useAppStyles"
 
 type Props = NativeStackScreenProps<RootStackParamList, "EditGame">
 
 export default function EditGameScreen({ route, navigation }: Props) {
   const isDark = useThemeStore((s) => s.isDark())
-  const colors = {
-    background: isDark ? "#000" : "#fff",
-    text: isDark ? "#fff" : "#000",
-    inputBg: isDark ? "#222" : "#eee",
-    inputBorder: isDark ? "#444" : "#ccc",
-    modalBg: isDark ? "#1a1a1a" : "#fff",
-    modalText: isDark ? "#fff" : "#333",
-    overlay: "rgba(0,0,0,0.5)",
-  }
-
   const { id } = route.params
   const [game, setGame] = useState<GameModel | null>(null)
   const [date, setDate] = useState(new Date())
@@ -33,6 +24,18 @@ export default function EditGameScreen({ route, navigation }: Props) {
   const [winnerOnTie, setWinnerOnTie] = useState<"A" | "B" | "draw" | null>(null)
   const [isModalVisible, setIsModalVisible] = useState(false)
   const { playerA, playerB } = usePlayerStore()
+  const styles = useAppStyles()
+
+  useEffect(() => {
+    navigation.getParent()?.setOptions({ tabBarStyle: { display: "none" } })
+    return () =>
+      navigation.getParent()?.setOptions({
+        tabBarStyle: {
+          backgroundColor: isDark ? "#000" : "#fff",
+          borderTopColor: isDark ? "#111" : "#ccc",
+        },
+      })
+  }, [])
 
   useEffect(() => {
     const load = async () => {
@@ -44,7 +47,6 @@ export default function EditGameScreen({ route, navigation }: Props) {
       setScoreB(found.scoreB.toString())
       setWinnerOnTie(found.winnerOnTie ?? null)
     }
-
     load().catch((e) => {
       console.error("❌ Erreur chargement partie", e)
       Alert.alert("Erreur", "Impossible de charger la partie.")
@@ -80,7 +82,6 @@ export default function EditGameScreen({ route, navigation }: Props) {
 
   const handleSubmit = async () => {
     if (!game) return
-
     const a = parseInt(scoreA, 10)
     const b = parseInt(scoreB, 10)
 
@@ -89,7 +90,6 @@ export default function EditGameScreen({ route, navigation }: Props) {
       return
     }
 
-    // Égalité sans décision -> demander via modale
     if (a === b && winnerOnTie === null) {
       setIsModalVisible(true)
       return
@@ -107,140 +107,54 @@ export default function EditGameScreen({ route, navigation }: Props) {
     Alert.alert("✅ Modifié", "La partie a bien été mise à jour.")
     navigation.goBack()
   }
-  const styles = StyleSheet.create({
-    container: { flex: 1, padding: 16, backgroundColor: colors.background },
-    title: { fontSize: 22, fontWeight: "bold", marginBottom: 24, color: colors.text },
-    label: { fontSize: 16, marginTop: 12, color: colors.text },
-    dateText: {
-      fontSize: 18,
-      paddingVertical: 8,
-      paddingHorizontal: 12,
-      backgroundColor: colors.inputBg,
-      borderRadius: 4,
-      marginTop: 4,
-      alignSelf: "flex-start",
-      color: colors.text,
-    },
-    input: {
-      borderWidth: 1,
-      borderColor: colors.inputBorder,
-      backgroundColor: colors.inputBg,
-      color: colors.text,
-      padding: 8,
-      borderRadius: 6,
-      marginTop: 4,
-    },
-    buttonWrapper: {
-      marginTop: 12,
-    },
-    modalOverlay: {
-      flex: 1,
-      backgroundColor: colors.overlay,
-      justifyContent: "center",
-      alignItems: "center",
-    },
-    modalContainer: {
-      backgroundColor: colors.modalBg,
-      padding: 24,
-      borderRadius: 8,
-      width: "80%",
-      alignItems: "center",
-    },
-    modalTitle: {
-      fontSize: 18,
-      fontWeight: "bold",
-      marginBottom: 16,
-      color: colors.text,
-    },
-    modalOption: {
-      paddingVertical: 10,
-      paddingHorizontal: 16,
-      backgroundColor: colors.inputBg,
-      borderRadius: 4,
-      marginVertical: 6,
-      width: "100%",
-      alignItems: "center",
-    },
-    modalOptionSelected: {
-      backgroundColor: "#007BFF",
-    },
-    modalOptionText: {
-      fontSize: 16,
-      color: colors.modalText,
-    },
-    modalOptionTextSelected: {
-      fontSize: 16,
-      color: "#fff",
-      fontWeight: "bold",
-    },
-    modalActions: {
-      flexDirection: "row",
-      justifyContent: "space-between",
-      marginTop: 16,
-      width: "100%",
-    },
-    cancelButton: {
-      paddingVertical: 10,
-      paddingHorizontal: 20,
-      backgroundColor: "#ccc",
-      borderRadius: 4,
-    },
-    cancelText: {
-      color: "#333",
-      fontWeight: "bold",
-    },
-    okButton: {
-      paddingVertical: 10,
-      paddingHorizontal: 32,
-      backgroundColor: "#007BFF",
-      borderRadius: 4,
-    },
-    okText: {
-      color: "#fff",
-      fontWeight: "bold",
-    },
-  })
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Modifier la partie</Text>
+    <ScrollView contentContainerStyle={styles.formContainer}>
+      {/* Titre */}
+      <Text style={styles.titleSection}>Modifier la partie</Text>
 
       {/* Date */}
-      <Text style={styles.label}>Date de la partie :</Text>
+      <Text style={styles.formLabel}>Date de la partie :</Text>
       <TouchableOpacity onPress={() => setShowDatePicker(true)}>
-        <Text style={styles.dateText}>{formatDateFr(date, "eeee d MMMM yyyy")}</Text>
+        <Text style={styles.formDateText}>{formatDateFr(date, "eeee d MMMM yyyy")}</Text>
       </TouchableOpacity>
       {showDatePicker && <DateTimePicker value={date} mode="date" display="default" onChange={onChangeDate} />}
 
       {/* Heure */}
-      <Text style={[styles.label, { marginTop: 8 }]}>Heure :</Text>
+      <Text style={styles.formLabel}>Heure :</Text>
       <TouchableOpacity onPress={() => setShowTimePicker(true)}>
-        <Text style={styles.dateText}>{formatDateFr(date, "HH:mm")}</Text>
+        <Text style={styles.formDateText}>{formatDateFr(date, "HH:mm")}</Text>
       </TouchableOpacity>
       {showTimePicker && <DateTimePicker value={date} mode="time" display="default" onChange={onChangeTime} />}
 
-      {/* Scores */}
-      <Text style={styles.label}>Score {playerA} :</Text>
-      <TextInput style={styles.input} keyboardType="numeric" value={scoreA} onChangeText={setScoreA} />
+      {/* Score A */}
+      <Text style={styles.formLabel}>Score {playerA} :</Text>
+      <TextInput style={styles.formInput} keyboardType="numeric" value={scoreA} onChangeText={setScoreA} placeholderTextColor={styles.label.color} />
 
-      <Text style={styles.label}>Score {playerB} :</Text>
-      <TextInput style={styles.input} keyboardType="numeric" value={scoreB} onChangeText={setScoreB} />
+      {/* Score B */}
+      <Text style={styles.formLabel}>Score {playerB} :</Text>
+      <TextInput style={styles.formInput} keyboardType="numeric" value={scoreB} onChangeText={setScoreB} placeholderTextColor={styles.label.color} />
 
-      <View style={styles.buttonWrapper}>
-        <Button title="Enregistrer les modifications" onPress={handleSubmit} />
+      {/* Bouton Enregistrer */}
+      <View style={styles.formButtonWrapper}>
+        <TouchableOpacity style={[styles.settingsButton, styles.settingsButtonPrimary]} onPress={handleSubmit}>
+          <Text style={styles.settingsButtonText}>Enregistrer les modifications</Text>
+        </TouchableOpacity>
       </View>
 
-      <View style={styles.buttonWrapper}>
-        <Button title="Annuler" onPress={() => navigation.goBack()} />
+      {/* Bouton Annuler */}
+      <View style={styles.formButtonWrapper}>
+        <TouchableOpacity style={[styles.settingsButton, styles.settingsButtonDanger]} onPress={() => navigation.goBack()}>
+          <Text style={styles.settingsButtonTextDanger}>Annuler</Text>
+        </TouchableOpacity>
       </View>
 
-      {/* Modale égalité */}
+      {/* Modal égalité */}
       <Modal visible={isModalVisible} transparent animationType="slide">
         <View style={styles.modalOverlay}>
           <View style={styles.modalContainer}>
             <Text style={styles.modalTitle}>Qui a le plus d'essences ?</Text>
 
-            {/* Options de sélection */}
             {["A", "B", "draw"].map((value) => {
               const label = value === "A" ? playerA : value === "B" ? playerB : "Égalité parfaite"
               const selected = winnerOnTie === value
@@ -255,32 +169,30 @@ export default function EditGameScreen({ route, navigation }: Props) {
               )
             })}
 
-            {/* Boutons de validation */}
             <View style={styles.modalActions}>
               <TouchableOpacity
-                style={styles.cancelButton}
+                style={styles.modalCancelButton}
                 onPress={() => {
                   setWinnerOnTie(null)
                   setIsModalVisible(false)
                 }}
               >
-                <Text style={styles.cancelText}>Annuler</Text>
+                <Text style={styles.modalCancelText}>Annuler</Text>
               </TouchableOpacity>
-
               <TouchableOpacity
-                style={[styles.okButton, { opacity: winnerOnTie === null ? 0.5 : 1 }]}
+                style={[styles.modalOkButton, { opacity: winnerOnTie === null ? 0.5 : 1 }]}
                 onPress={() => {
                   setIsModalVisible(false)
                   handleSubmit()
                 }}
                 disabled={winnerOnTie === null}
               >
-                <Text style={styles.okText}>OK</Text>
+                <Text style={styles.modalOkText}>OK</Text>
               </TouchableOpacity>
             </View>
           </View>
         </View>
       </Modal>
-    </View>
+    </ScrollView>
   )
 }

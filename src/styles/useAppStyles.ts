@@ -96,6 +96,121 @@ export const useAppStyles = () => {
       opacity: 0.8,
     },
 
+    // === ADD / EDIT GAME ===
+    formContainer: {
+      flex: 1,
+      padding: 16,
+      backgroundColor: background,
+    },
+    formLabel: {
+      fontSize: 16,
+      marginTop: 16,
+      color: textMain,
+      fontWeight: "600",
+    },
+    formDateText: {
+      fontSize: 18,
+      paddingVertical: 8,
+      paddingHorizontal: 12,
+      backgroundColor: blockBackground,
+      borderRadius: 8,
+      marginTop: 4,
+      alignSelf: "flex-start",
+      color: textMain,
+      borderWidth: 1,
+      borderColor: border,
+    },
+    formInput: {
+      borderWidth: 1,
+      borderColor: border,
+      backgroundColor: blockBackground,
+      color: textMain,
+      borderRadius: 8,
+      padding: 12,
+      marginTop: 4,
+      fontSize: 16,
+    },
+    formButtonWrapper: {
+      marginTop: 16,
+    },
+
+    // === MODAL ÉGALITÉ ===
+    modalOverlay: {
+      flex: 1,
+      backgroundColor: "rgba(0,0,0,0.6)",
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    modalContainer: {
+      backgroundColor: blockBackground,
+      padding: 24,
+      borderRadius: 12,
+      width: "80%",
+      alignItems: "center",
+      borderWidth: 1,
+      borderColor: border,
+    },
+    modalTitle: {
+      fontSize: 18,
+      fontWeight: "bold",
+      marginBottom: 16,
+      color: gold,
+      letterSpacing: 1,
+    },
+    modalOption: {
+      paddingVertical: 10,
+      paddingHorizontal: 16,
+      backgroundColor: isDark ? "#2a2a2a" : "#fff",
+      borderRadius: 8,
+      marginVertical: 6,
+      width: "100%",
+      alignItems: "center",
+      borderWidth: 1,
+      borderColor: border,
+    },
+    modalOptionSelected: {
+      backgroundColor: isDark ? "#3a2e0a" : "#f5e6c0",
+      borderColor: gold,
+    },
+    modalOptionText: {
+      fontSize: 16,
+      color: textMain,
+    },
+    modalOptionTextSelected: {
+      fontSize: 16,
+      color: gold,
+      fontWeight: "bold",
+    },
+    modalActions: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      marginTop: 16,
+      width: "100%",
+      gap: 12,
+    },
+    modalCancelButton: {
+      flex: 1,
+      paddingVertical: 12,
+      backgroundColor: isDark ? "#2a2a2a" : "#e0e0e0",
+      borderRadius: 8,
+      alignItems: "center",
+    },
+    modalCancelText: {
+      color: textMain,
+      fontWeight: "bold",
+    },
+    modalOkButton: {
+      flex: 1,
+      paddingVertical: 12,
+      backgroundColor: gold,
+      borderRadius: 8,
+      alignItems: "center",
+    },
+    modalOkText: {
+      color: "#000",
+      fontWeight: "bold",
+    },
+
     // === BLOCS / CARDS ===
     block: {
       backgroundColor: blockBackground,

@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react"
-import { View, Text, TextInput, Button, TouchableOpacity, StyleSheet, Platform, Alert, Modal } from "react-native"
+import { useState, useEffect, useCallback } from "react"
+import { View, Text, TextInput, TouchableOpacity, Platform, Alert, Modal, ScrollView } from "react-native"
 import DateTimePicker from "@react-native-community/datetimepicker"
 import { usePlayerStore } from "@stores/playerStore"
 import { useGameStore } from "@stores/gameStore"
@@ -7,6 +7,8 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack"
 import { RootStackParamList } from "src/navigation/types"
 import { useThemeStore } from "@stores/themeStore"
 import { formatDateFr } from "@utils/formatDate"
+import { useFocusEffect } from "@react-navigation/native"
+import { useAppStyles } from "src/styles/useAppStyles"
 
 // Définition des props de navigation pour TypeScript
 type Props = NativeStackScreenProps<RootStackParamList, "AddGame">
@@ -14,23 +16,14 @@ type Props = NativeStackScreenProps<RootStackParamList, "AddGame">
 export default function AddGameScreen({ navigation }: Props) {
   const isDark = useThemeStore((s) => s.isDark())
 
-  const colors = {
-    background: isDark ? "#000" : "#fff",
-    text: isDark ? "#fff" : "#000",
-    inputBg: isDark ? "#222" : "#eee",
-    inputBorder: isDark ? "#444" : "#ccc",
-    buttonBg: isDark ? "#111" : "#fff",
-    modalBg: isDark ? "#1a1a1a" : "#fff",
-    modalText: isDark ? "#fff" : "#333",
-    overlay: "rgba(0,0,0,0.5)",
-  }
-
   // On récupère les noms de joueurs depuis le store persistant
   const playerA = usePlayerStore((s) => s.playerA)
   const playerB = usePlayerStore((s) => s.playerB)
 
   // La fonction pour ajouter une partie dans le store (et en BDD)
   const addGame = useGameStore((s) => s.addGame)
+
+  const styles = useAppStyles()
 
   // --- États locaux du composant ---
   // date : la date sélectionnée (initialisée à aujourd’hui)
@@ -55,14 +48,19 @@ export default function AddGameScreen({ navigation }: Props) {
       })
   }, [])
 
-  /**
-   * onChangeDate :
-   * - callback appelé par le DateTimePicker
-   * - cache le picker sur Android (iOS le garde ouvert si Platform.OS==='ios')
-   * - met à jour la date si l’utilisateur a choisi une valeur
-   */
+  useFocusEffect(
+    useCallback(() => {
+      setDate(new Date())
+      setScoreA("")
+      setScoreB("")
+      setWinnerOnTie(null)
+      setIsModalVisible(false)
+      setShowPicker(false)
+      setShowTimePicker(false)
+    }, []),
+  )
+
   const onChangeDate = (_event: any, selectedDate?: Date) => {
-    // Sur Android, masquer le picker dès qu’une date est choisie ou qu’on annule
     setShowPicker(Platform.OS === "ios")
     if (selectedDate) {
       const d = new Date(date)
@@ -119,155 +117,72 @@ export default function AddGameScreen({ navigation }: Props) {
       Alert.alert("Erreur", "Impossible d'ajouter la partie. Réessayez.")
     }
   }
-  /**
-   * handleCancel : annule l'ajout et retourne à l'écran précédent
-   */
-  const handleCancel = () => {
-    navigation.goBack()
-  }
-
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      padding: 16,
-      backgroundColor: colors.background,
-    },
-    label: {
-      fontSize: 16,
-      marginTop: 16,
-      color: colors.text,
-    },
-    dateText: {
-      fontSize: 18,
-      paddingVertical: 8,
-      paddingHorizontal: 12,
-      backgroundColor: colors.inputBg,
-      borderRadius: 4,
-      marginTop: 4,
-      alignSelf: "flex-start",
-      color: colors.text,
-    },
-    input: {
-      borderWidth: 1,
-      borderColor: colors.inputBorder,
-      backgroundColor: colors.inputBg,
-      color: colors.text,
-      borderRadius: 4,
-      padding: 8,
-      marginTop: 4,
-      width: 80,
-    },
-    buttonWrapper: {
-      marginTop: 12,
-    },
-    modalOverlay: {
-      flex: 1,
-      backgroundColor: colors.overlay,
-      justifyContent: "center",
-      alignItems: "center",
-    },
-    modalContainer: {
-      backgroundColor: colors.modalBg,
-      padding: 24,
-      borderRadius: 8,
-      width: "80%",
-      alignItems: "center",
-    },
-    modalTitle: {
-      fontSize: 18,
-      fontWeight: "bold",
-      marginBottom: 16,
-      color: colors.text,
-    },
-    modalOption: {
-      paddingVertical: 10,
-      paddingHorizontal: 16,
-      backgroundColor: colors.inputBg,
-      borderRadius: 4,
-      marginVertical: 6,
-      width: "100%",
-      alignItems: "center",
-    },
-    modalOptionSelected: {
-      backgroundColor: "#007BFF",
-    },
-    modalOptionText: {
-      fontSize: 16,
-      color: colors.modalText,
-    },
-    modalOptionTextSelected: {
-      fontSize: 16,
-      color: "#fff",
-      fontWeight: "bold",
-    },
-    modalActions: {
-      flexDirection: "row",
-      justifyContent: "space-between",
-      marginTop: 16,
-      width: "100%",
-    },
-    cancelButton: {
-      paddingVertical: 10,
-      paddingHorizontal: 20,
-      backgroundColor: "#ccc",
-      borderRadius: 4,
-    },
-    cancelText: {
-      color: "#333",
-      fontWeight: "bold",
-    },
-    okButton: {
-      paddingVertical: 10,
-      paddingHorizontal: 32,
-      backgroundColor: "#007BFF",
-      borderRadius: 4,
-    },
-    okText: {
-      color: "#fff",
-      fontWeight: "bold",
-    },
-  })
 
   return (
-    <View style={styles.container}>
-      {/* Label + déclencheur du picker de date */}
-      <Text style={styles.label}>Date de la partie :</Text>
-      <TouchableOpacity onPress={() => setShowPicker(true)}>
-        <Text style={styles.dateText}>{formatDateFr(date, "eeee d MMMM yyyy")}</Text>
-      </TouchableOpacity>
+    <ScrollView contentContainerStyle={styles.formContainer}>
+      {/* Titre */}
+      <Text style={styles.titleSection}>Ajouter une partie</Text>
 
-      {/* DateTimePicker natif (iOS & Android) */}
+      {/* Date */}
+      <Text style={styles.formLabel}>Date de la partie :</Text>
+      <TouchableOpacity onPress={() => setShowPicker(true)}>
+        <Text style={styles.formDateText}>{formatDateFr(date, "eeee d MMMM yyyy")}</Text>
+      </TouchableOpacity>
       {showPicker && <DateTimePicker value={date} mode="date" display="default" onChange={onChangeDate} />}
 
-      {/* TimePicker choix heure/minutes */}
-      <Text style={[styles.label, { marginTop: 8 }]}>Heure :</Text>
+      {/* Heure */}
+      <Text style={styles.formLabel}>Heure :</Text>
       <TouchableOpacity onPress={() => setShowTimePicker(true)}>
-        <Text style={styles.dateText}>{formatDateFr(date, "HH:mm")}</Text>
+        <Text style={styles.formDateText}>{formatDateFr(date, "HH:mm")}</Text>
       </TouchableOpacity>
       {showTimePicker && <DateTimePicker value={date} mode="time" display="default" onChange={onChangeTime} />}
 
-      {/* Saisie du score pour le joueur A */}
-      <Text style={styles.label}>{playerA} – Score :</Text>
-      <TextInput style={styles.input} keyboardType="numeric" value={scoreA} onChangeText={setScoreA} placeholder="" />
+      {/* Score A */}
+      <Text style={styles.formLabel}>{playerA} – Score :</Text>
+      <TextInput
+        style={styles.formInput}
+        keyboardType="numeric"
+        value={scoreA}
+        onChangeText={setScoreA}
+        placeholder="0"
+        placeholderTextColor={styles.label.color}
+      />
 
-      {/* Saisie du score pour le joueur B */}
-      <Text style={styles.label}>{playerB} – Score :</Text>
-      <TextInput style={styles.input} keyboardType="numeric" value={scoreB} onChangeText={setScoreB} placeholder="" />
+      {/* Score B */}
+      <Text style={styles.formLabel}>{playerB} – Score :</Text>
+      <TextInput
+        style={styles.formInput}
+        keyboardType="numeric"
+        value={scoreB}
+        onChangeText={setScoreB}
+        placeholder="0"
+        placeholderTextColor={styles.label.color}
+      />
 
-      {/* Bouton de validation, désactivé si l’un des champs est vide */}
-      <View style={styles.buttonWrapper}>
-        <Button title="Ajouter la partie" onPress={handleSubmit} disabled={!scoreA.trim() || !scoreB.trim()} />
+      {/* Bouton Ajouter */}
+      <View style={styles.formButtonWrapper}>
+        <TouchableOpacity
+          style={[styles.settingsButton, styles.settingsButtonPrimary, { opacity: !scoreA.trim() || !scoreB.trim() ? 0.5 : 1 }]}
+          onPress={handleSubmit}
+          disabled={!scoreA.trim() || !scoreB.trim()}
+        >
+          <Text style={styles.settingsButtonText}>Ajouter la partie</Text>
+        </TouchableOpacity>
       </View>
 
-      {/* Bouton Annuler : revient à l’écran précédent */}
-      <View style={styles.buttonWrapper}>
-        <Button title="Annuler" onPress={handleCancel} />
+      {/* Bouton Annuler */}
+      <View style={styles.formButtonWrapper}>
+        <TouchableOpacity style={[styles.settingsButton, styles.settingsButtonDanger]} onPress={() => navigation.goBack()}>
+          <Text style={styles.settingsButtonTextDanger}>Annuler</Text>
+        </TouchableOpacity>
       </View>
+
+      {/* Modal égalité */}
       <Modal visible={isModalVisible} transparent animationType="slide">
         <View style={styles.modalOverlay}>
           <View style={styles.modalContainer}>
             <Text style={styles.modalTitle}>Qui a le plus d'essences ?</Text>
-            {/* Options de sélection */}
+
             {["A", "B", "draw"].map((value) => {
               const label = value === "A" ? playerA : value === "B" ? playerB : "Égalité parfaite"
               const selected = winnerOnTie === value
@@ -282,25 +197,24 @@ export default function AddGameScreen({ navigation }: Props) {
               )
             })}
 
-            {/* Boutons de validation */}
             <View style={styles.modalActions}>
-              <TouchableOpacity style={styles.cancelButton} onPress={() => setIsModalVisible(false)}>
-                <Text style={styles.cancelText}>Annuler</Text>
+              <TouchableOpacity style={styles.modalCancelButton} onPress={() => setIsModalVisible(false)}>
+                <Text style={styles.modalCancelText}>Annuler</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={[styles.okButton, { opacity: winnerOnTie === null ? 0.5 : 1 }]}
+                style={[styles.modalOkButton, { opacity: winnerOnTie === null ? 0.5 : 1 }]}
                 onPress={() => {
                   setIsModalVisible(false)
                   handleSubmit()
                 }}
                 disabled={winnerOnTie === null}
               >
-                <Text style={styles.okText}>OK</Text>
+                <Text style={styles.modalOkText}>OK</Text>
               </TouchableOpacity>
             </View>
           </View>
         </View>
       </Modal>
-    </View>
+    </ScrollView>
   )
 }
