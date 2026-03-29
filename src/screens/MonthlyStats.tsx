@@ -1,11 +1,11 @@
 import { calculateMonthlyStats, getCurrentWinStreak, getFilteredGamesByMonth, getMonthLabel } from "@utils/statsHelpers"
 import { useMemo, useState } from "react"
-import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native"
+import { View, Text, TouchableOpacity } from "react-native"
 import { Game } from "src/stores/gameStore"
-import { useStatsStyles } from "./StatsScreen.styles"
+import { useAppStyles } from "src/styles/useAppStyles"
 import { usePlayerStore } from "@stores/playerStore"
-import PieChart from "@components/PieChart"
 import { useThemeStore } from "@stores/themeStore"
+import PieChart from "@components/PieChart"
 
 interface Props {
   games: Game[]
@@ -13,7 +13,7 @@ interface Props {
 
 const MonthlyStats = ({ games }: Props) => {
   const [currentMonthOffset, setCurrentMonthOffset] = useState(0)
-  const sharedStyles = useStatsStyles()
+  const styles = useAppStyles()
   const { playerA, playerB } = usePlayerStore()
   const isDark = useThemeStore((s) => s.isDark())
 
@@ -26,174 +26,153 @@ const MonthlyStats = ({ games }: Props) => {
   const filteredGames = useMemo(() => getFilteredGamesByMonth(games, currentDate), [games, currentDate])
   const stats = useMemo(() => calculateMonthlyStats(filteredGames), [filteredGames])
   const currentStreak = useMemo(() => getCurrentWinStreak(filteredGames), [filteredGames])
-  const isLoading = false
 
   const handlePrevMonth = () => setCurrentMonthOffset((prev) => prev - 1)
   const handleNextMonth = () => setCurrentMonthOffset((prev) => prev + 1)
 
   return (
-    <View style={sharedStyles.container}>
+    <View style={styles.container}>
       {/* Sélection du mois */}
-      <View style={sharedStyles.monthSelector}>
-        <TouchableOpacity onPress={handlePrevMonth} style={sharedStyles.monthButton}>
-          <Text style={sharedStyles.monthButtonText}>{"<"}</Text>
+      <View style={styles.monthSelector}>
+        <TouchableOpacity onPress={handlePrevMonth} style={styles.monthButton}>
+          <Text style={styles.monthButtonText}>{"<"}</Text>
         </TouchableOpacity>
-        <Text style={sharedStyles.monthLabel}>{getMonthLabel(currentDate)}</Text>
-        <TouchableOpacity onPress={handleNextMonth} style={sharedStyles.monthButton}>
-          <Text style={sharedStyles.monthButtonText}>{">"}</Text>
+        <Text style={styles.monthLabel}>{getMonthLabel(currentDate)}</Text>
+        <TouchableOpacity onPress={handleNextMonth} style={styles.monthButton}>
+          <Text style={styles.monthButtonText}>{">"}</Text>
         </TouchableOpacity>
       </View>
 
-      {isLoading ? (
-        <ActivityIndicator size="large" color="#fff" />
+      {filteredGames.length < 2 ? (
+        <Text style={styles.warning}>Pas assez de parties enregistrées.</Text>
       ) : (
-        <View style={sharedStyles.blocksWrapper}>
-          {filteredGames.length < 2 ? (
-            <Text style={sharedStyles.warning}>Pas assez de parties enregistrées.</Text>
-          ) : (
-            <>
-              {/* Score du mois */}
-              <View style={sharedStyles.block}>
-                <Text style={sharedStyles.blockTitle}>Score du mois</Text>
-                <View style={sharedStyles.row}>
-                  <View style={sharedStyles.column}>
-                    <Text style={sharedStyles.playerName}>{playerA}</Text>
-                    <Text style={sharedStyles.playerValue}>{stats.totalPointsA} pts</Text>
-                  </View>
-                  <View style={sharedStyles.separator} />
-                  <View style={sharedStyles.column}>
-                    <Text style={sharedStyles.playerName}>{playerB}</Text>
-                    <Text style={sharedStyles.playerValue}>{stats.totalPointsB} pts</Text>
-                  </View>
+        <View style={styles.blocksWrapper}>
+          {/* Score du mois */}
+          <View style={styles.block}>
+            <Text style={styles.blockTitle}>Score du mois</Text>
+            <View style={styles.row}>
+              <View style={styles.column}>
+                <Text style={styles.playerName}>{playerA}</Text>
+                <Text style={styles.playerValue}>{stats.totalPointsA} pts</Text>
+              </View>
+              <View style={styles.column}>
+                <Text style={styles.playerName}>{playerB}</Text>
+                <Text style={styles.playerValue}>{stats.totalPointsB} pts</Text>
+              </View>
+            </View>
+          </View>
+
+          {/* Série de victoires en cours */}
+          <View style={styles.block}>
+            <Text style={styles.blockTitle}>📈 Série de victoires en cours</Text>
+            <Text style={styles.blockText}>
+              {currentStreak.count > 0
+                ? `${currentStreak.player === "A" ? playerA : playerB} – ${currentStreak.count} victoire${currentStreak.count > 1 ? "s" : ""}`
+                : "ni l'un ni l'autre 😅"}
+            </Text>
+          </View>
+
+          {/* % Victoires / Parties */}
+          <View style={styles.block}>
+            <Text style={styles.blockTitle}>Nombre de parties : {stats.totalGames}</Text>
+            <View style={styles.winRateBar}>
+              {stats.winRateA > 0 && (
+                <View style={[styles.winRateSegmentA, { flex: stats.winRateA }]}>
+                  <Text style={styles.winRateSegmentText}>{stats.winRateA}%</Text>
+                </View>
+              )}
+              {stats.drawRate > 0 && (
+                <View style={[styles.winRateSegmentDraw, { flex: stats.drawRate }]}>
+                  <Text style={styles.winRateSegmentText}>{stats.drawRate}%</Text>
+                </View>
+              )}
+              {stats.winRateB > 0 && (
+                <View style={[styles.winRateSegmentB, { flex: stats.winRateB }]}>
+                  <Text style={styles.winRateSegmentText}>{stats.winRateB}%</Text>
+                </View>
+              )}
+            </View>
+            <View style={styles.row}>
+              <View style={styles.half}>
+                <Text style={styles.label}>{playerA}</Text>
+              </View>
+              <View style={styles.half}>
+                <Text style={[styles.label, { textAlign: "right" }]}>{playerB}</Text>
+              </View>
+            </View>
+          </View>
+
+          {/* Répartition V/D */}
+          <View style={styles.block}>
+            <Text style={styles.blockTitle}>Répartition Victoires / Défaites</Text>
+            <View style={styles.pieContainer}>
+              <PieChart
+                valueA={stats.winRateA}
+                valueB={stats.winRateB}
+                valueDraw={stats.drawRate}
+                labelA={playerA}
+                labelB={playerB}
+                isDark={isDark}
+              />
+            </View>
+          </View>
+
+          {/* Historique des dernières parties */}
+          <View style={styles.block}>
+            <Text style={styles.blockTitle}>Historique des dernières parties</Text>
+            <View style={styles.historyRow}>
+              <View style={styles.historyColumn}>
+                <Text style={styles.blockText}>{playerA}</Text>
+                <View style={styles.historyLetterRow}>
+                  {stats.lastResults.slice(-5).map((r, i) => (
+                    <Text key={i} style={r === "A" ? styles.historyLetterWin : r === "B" ? styles.historyLetterLoss : styles.historyLetterDraw}>
+                      {r === "A" ? "V" : r === "B" ? "D" : "N"}
+                    </Text>
+                  ))}
                 </View>
               </View>
-
-              {/* Série de victoires en cours */}
-              <View style={sharedStyles.block}>
-                <Text style={sharedStyles.blockTitle}>Série de victoires en cours</Text>
-                <Text style={sharedStyles.blockText}>
-                  {currentStreak.count > 0
-                    ? `${currentStreak.player === "A" ? playerA : playerB} – ${currentStreak.count} victoire${currentStreak.count > 1 ? "s" : ""}`
-                    : "ni l’un ni l’autre 😅"}
-                </Text>
-              </View>
-
-              {/* % Victoires / Parties */}
-              <View style={sharedStyles.block}>
-                <Text style={sharedStyles.blockTitle}>Nombre de parties : {stats.totalGames}</Text>
-
-                <View style={sharedStyles.winRateBar}>
-                  {stats.winRateA > 0 && (
-                    <View style={[sharedStyles.winRateSegmentA, { flex: stats.winRateA }]}>
-                      <Text style={sharedStyles.winRateSegmentText}>{stats.winRateA}%</Text>
-                    </View>
-                  )}
-                  {stats.drawRate > 0 && (
-                    <View style={[sharedStyles.winRateSegmentDraw, { flex: stats.drawRate }]}>
-                      <Text style={sharedStyles.winRateSegmentText}>{stats.drawRate}%</Text>
-                    </View>
-                  )}
-                  {stats.winRateB > 0 && (
-                    <View style={[sharedStyles.winRateSegmentB, { flex: stats.winRateB }]}>
-                      <Text style={sharedStyles.winRateSegmentText}>{stats.winRateB}%</Text>
-                    </View>
-                  )}
-                </View>
-
-                <View style={sharedStyles.row}>
-                  <View style={sharedStyles.half}>
-                    <Text style={sharedStyles.label}>{playerA}</Text>
-                  </View>
-                  <View style={sharedStyles.half}>
-                    <Text style={[sharedStyles.label, { textAlign: "right" }]}>{playerB}</Text>
-                  </View>
+              <View style={styles.historyColumn}>
+                <Text style={styles.blockText}>{playerB}</Text>
+                <View style={styles.historyLetterRow}>
+                  {stats.lastResults.slice(-5).map((r, i) => (
+                    <Text key={i} style={r === "B" ? styles.historyLetterWin : r === "A" ? styles.historyLetterLoss : styles.historyLetterDraw}>
+                      {r === "B" ? "V" : r === "A" ? "D" : "N"}
+                    </Text>
+                  ))}
                 </View>
               </View>
+            </View>
+          </View>
 
-              {/* Donut Répartitions Victoires / Défaites */}
-              <View style={sharedStyles.block}>
-                <Text style={sharedStyles.blockTitle}>Répartition Victoires / Défaites</Text>
-                <View style={sharedStyles.pieContainer}>
-                  <PieChart
-                    valueA={stats.winRateA}
-                    valueB={stats.winRateB}
-                    valueDraw={stats.drawRate}
-                    labelA={playerA}
-                    labelB={playerB}
-                    isDark={isDark}
-                  />
-                </View>
+          {/* Moyenne des points */}
+          <View style={styles.block}>
+            <Text style={styles.blockTitle}>Moyenne de points / partie</Text>
+            <View style={styles.row}>
+              <View style={styles.column}>
+                <Text style={styles.playerName}>{playerA}</Text>
+                <Text style={styles.blockText}>{stats.avgScoreA} pts</Text>
               </View>
+              <View style={styles.column}>
+                <Text style={styles.playerName}>{playerB}</Text>
+                <Text style={styles.blockText}>{stats.avgScoreB} pts</Text>
+              </View>
+            </View>
+          </View>
 
-              {/* Dernières parties */}
-              <View style={sharedStyles.block}>
-                <Text style={sharedStyles.blockTitle}>Historique des dernières parties</Text>
-                <View style={sharedStyles.historyRow}>
-                  <View style={sharedStyles.historyColumn}>
-                    <Text style={sharedStyles.blockText}>{playerA}</Text>
-                    <View style={{ flexDirection: "row", gap: 4, marginTop: 4 }}>
-                      {stats.lastResults.slice(-5).map((r, i) => (
-                        <Text
-                          key={i}
-                          style={
-                            r === "A" ? sharedStyles.historyLetterWin : r === "B" ? sharedStyles.historyLetterLoss : sharedStyles.historyLetterDraw
-                          }
-                        >
-                          {r === "A" ? "V" : r === "B" ? "D" : "N"}
-                        </Text>
-                      ))}
-                    </View>
-                  </View>
-                  <View style={sharedStyles.historyColumn}>
-                    <Text style={sharedStyles.blockText}>{playerB}</Text>
-                    <View style={{ flexDirection: "row", gap: 4, marginTop: 4 }}>
-                      {stats.lastResults.slice(-5).map((r, i) => (
-                        <Text
-                          key={i}
-                          style={
-                            r === "B" ? sharedStyles.historyLetterWin : r === "A" ? sharedStyles.historyLetterLoss : sharedStyles.historyLetterDraw
-                          }
-                        >
-                          {r === "B" ? "V" : r === "A" ? "D" : "N"}
-                        </Text>
-                      ))}
-                    </View>
-                  </View>
-                </View>
+          {/* Meilleure victoire */}
+          <View style={styles.block}>
+            <Text style={styles.blockTitle}>Meilleure victoire</Text>
+            <View style={styles.rowBetween}>
+              <View style={styles.playerStat}>
+                <Text style={styles.playerName}>{playerA}</Text>
+                <Text style={styles.playerValue}>{stats.bestVictoryA} pts</Text>
               </View>
-
-              {/* Moyenne des points */}
-              <View style={sharedStyles.block}>
-                <Text style={sharedStyles.blockTitle}>Moyenne de points / partie</Text>
-                <View style={sharedStyles.row}>
-                  <View style={sharedStyles.column}>
-                    <Text style={sharedStyles.playerLabel}>{playerA}</Text>
-                    <Text style={sharedStyles.blockText}>{stats.avgScoreA} pts</Text>
-                  </View>
-                  <Text style={sharedStyles.separator}>|</Text>
-                  <View style={sharedStyles.column}>
-                    <Text style={sharedStyles.playerLabel}>{playerB}</Text>
-                    <Text style={sharedStyles.blockText}>{stats.avgScoreB} pts</Text>
-                  </View>
-                </View>
+              <View style={styles.playerStat}>
+                <Text style={styles.playerName}>{playerB}</Text>
+                <Text style={styles.playerValue}>{stats.bestVictoryB} pts</Text>
               </View>
-
-              {/* Meilleure victoire */}
-              <View style={sharedStyles.block}>
-                <Text style={sharedStyles.blockTitle}>Meilleure victoire</Text>
-                <View style={sharedStyles.rowBetween}>
-                  <View style={sharedStyles.playerStat}>
-                    <Text style={sharedStyles.playerName}>{playerA}</Text>
-                    <Text style={sharedStyles.playerValue}>+ {stats.bestVictoryA} pts</Text>
-                  </View>
-                  <View style={sharedStyles.playerStat}>
-                    <Text style={sharedStyles.playerName}>{playerB}</Text>
-                    <Text style={sharedStyles.playerValue}>+ {stats.bestVictoryB} pts</Text>
-                  </View>
-                </View>
-              </View>
-            </>
-          )}
+            </View>
+          </View>
         </View>
       )}
     </View>

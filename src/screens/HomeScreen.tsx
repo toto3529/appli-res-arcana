@@ -1,13 +1,13 @@
 import { useCallback, useRef } from "react"
-import { View, Text, TouchableOpacity, Alert, StyleSheet, LayoutAnimation } from "react-native"
+import { View, Text, TouchableOpacity, Alert, LayoutAnimation } from "react-native"
 import { useFocusEffect } from "@react-navigation/native"
 import { SwipeListView, SwipeRow } from "react-native-swipe-list-view"
 import { format } from "date-fns"
 import { useGameStore } from "@stores/gameStore"
 import { NativeStackScreenProps } from "@react-navigation/native-stack"
 import { RootStackParamList } from "src/navigation/types"
-import { useThemeStore } from "@stores/themeStore"
 import { usePlayerStore } from "@stores/playerStore"
+import { useAppStyles } from "src/styles/useAppStyles"
 
 type Props = NativeStackScreenProps<RootStackParamList, "HomeMain">
 
@@ -18,19 +18,8 @@ export default function HomeScreen({ navigation }: Props) {
   const deleteGame = useGameStore((s) => s.deleteGame)
   const listRef = useRef<SwipeListView<any>>(null)
   const openRowRef = useRef<SwipeRow<any> | null>(null)
-  const isDark = useThemeStore((s) => s.isDark())
   const { playerA, playerB } = usePlayerStore()
-
-  const colors = {
-    background: isDark ? "#000" : "#fff",
-    card: isDark ? "#1a1a1a" : "#eee",
-    textMain: isDark ? "#fff" : "#000",
-    textSecondary: isDark ? "#ccc" : "#666",
-    win: "green",
-    loss: "red",
-    color: "#C9A84C",
-    buttonBg: isDark ? "#111" : "#fff",
-  }
+  const styles = useAppStyles()
 
   useFocusEffect(
     useCallback(() => {
@@ -64,212 +53,9 @@ export default function HomeScreen({ navigation }: Props) {
     .slice(0, 20)
     .map((item) => ({ key: item.id, ...item }) as any) // SwipeListView exige un champ `key`
 
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: colors.background,
-      paddingTop: 32,
-    },
-    title: {
-      textAlign: "center",
-      fontSize: 28,
-      fontWeight: "900",
-      color: "#C9A84C",
-      letterSpacing: 6,
-      textTransform: "uppercase",
-      marginBottom: 4,
-    },
-    subtitle: {
-      textAlign: "center",
-      fontSize: 13,
-      letterSpacing: 2,
-      textTransform: "uppercase",
-      marginBottom: 16,
-      color: colors.textSecondary,
-    },
-    titleSeparator: {
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "center",
-      marginBottom: 12,
-      gap: 8,
-    },
-    titleLine: {
-      height: 1,
-      width: 60,
-      backgroundColor: "#C9A84C",
-      opacity: 0.5,
-    },
-    titleDiamond: {
-      color: "#C9A84C",
-      fontSize: 10,
-      opacity: 0.8,
-    },
-    listWrapper: {
-      flex: 1,
-      overflow: "hidden",
-    },
-    rowFront: {
-      marginHorizontal: 16,
-      marginVertical: 6,
-      height: 80,
-      borderRadius: 4,
-      overflow: "hidden",
-      backgroundColor: colors.card,
-    },
-    rowFrontWinA: {
-      borderLeftWidth: 4,
-      borderLeftColor: "#4CAF50",
-      borderRightWidth: 4,
-      borderRightColor: "#e74c3c",
-    },
-    rowFrontWinB: {
-      borderLeftWidth: 4,
-      borderLeftColor: "#e74c3c",
-      borderRightWidth: 4,
-      borderRightColor: "#4CAF50",
-    },
-    rowFrontDraw: {
-      borderLeftWidth: 4,
-      borderLeftColor: "#C9A84C",
-      borderRightWidth: 4,
-      borderRightColor: "#C9A84C",
-    },
-    rowContent: {
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
-      padding: 12,
-    },
-    playerBox: {
-      width: "30%",
-      alignItems: "center",
-      justifyContent: "center",
-    },
-    playerName: {
-      fontSize: 16,
-      fontWeight: "bold",
-      color: colors.textMain,
-    },
-    status: {
-      fontSize: 14,
-    },
-    scoreBox: {
-      width: "40%",
-      alignItems: "center",
-      justifyContent: "center",
-    },
-    scoreText: {
-      fontSize: 18,
-      fontWeight: "bold",
-      color: colors.textMain,
-    },
-    dateText: {
-      fontSize: 12,
-      color: colors.textSecondary,
-      marginTop: 4,
-    },
-    rowBack: {
-      position: "absolute",
-      top: 6,
-      bottom: 6,
-      left: 16,
-      right: 16,
-      height: 80,
-      flexDirection: "row",
-      justifyContent: "space-between",
-      alignItems: "center",
-      borderRadius: 4,
-      overflow: "hidden",
-    },
-    editButton: {
-      width: 80,
-      height: 80,
-      backgroundColor: "#4CAF50",
-      justifyContent: "center",
-      alignItems: "center",
-      borderTopLeftRadius: 4,
-      borderBottomLeftRadius: 4,
-    },
-    editText: {
-      color: "#fff",
-      fontWeight: "bold",
-    },
-    deleteButton: {
-      width: 80,
-      height: 80,
-      backgroundColor: "red",
-      justifyContent: "center",
-      alignItems: "center",
-      borderTopRightRadius: 4,
-      borderBottomRightRadius: 4,
-    },
-    deleteText: {
-      color: "#fff",
-      fontWeight: "bold",
-    },
-    fab: {
-      position: "absolute",
-      bottom: 24,
-      alignSelf: "center",
-      left: "50%",
-      marginLeft: -30,
-      width: 60,
-      height: 60,
-      borderRadius: 30,
-      backgroundColor: "#C9A84C",
-      justifyContent: "center",
-      alignItems: "center",
-      elevation: 8,
-    },
-    fabText: {
-      fontSize: 32,
-      color: "#000",
-      fontWeight: "bold",
-      lineHeight: 36,
-    },
-    win: {
-      color: colors.win,
-    },
-    loss: {
-      color: colors.loss,
-    },
-    draw: {
-      color: "#C9A84C",
-    },
-    badge: {
-      paddingHorizontal: 8,
-      paddingVertical: 3,
-      borderRadius: 6,
-      marginTop: 4,
-    },
-    badgeWin: {
-      backgroundColor: "#1a3a1a",
-    },
-    badgeLoss: {
-      backgroundColor: "#3a1a1a",
-    },
-    badgeDraw: {
-      backgroundColor: "#3a2e0a",
-    },
-    badgeText: {
-      fontSize: 12,
-      fontWeight: "bold",
-    },
-    badgeTextWin: {
-      color: "#4CAF50",
-    },
-    badgeTextLoss: {
-      color: "#e74c3c",
-    },
-    badgeTextDraw: {
-      color: "#C9A84C",
-    },
-  })
-
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>RES ARCANA</Text>
+    <View style={styles.screenBackground}>
+      <Text style={styles.titleGold}>RES ARCANA</Text>
       <View style={styles.titleSeparator}>
         <View style={styles.titleLine} />
         <Text style={styles.titleDiamond}>◆</Text>

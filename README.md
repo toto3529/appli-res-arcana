@@ -34,6 +34,31 @@ Avant de commencer, assure-toi d'avoir installé :
 
 ## 🚀 Lancer l'application
 
+## 🖥️ Lancer l'émulateur sans Android Studio
+
+Pour éviter d'ouvrir Android Studio au quotidien, installe l'extension VSCode **Android iOS Emulator** (DiemasMichiels.emulate).
+
+**Configuration de l'extension :**
+
+- Ouvre les settings VSCode (Ctrl+,)
+- Cherche "Android iOS Emulator"
+- Dans **Emulator Path Windows**, mets :
+
+```
+  C:\Users\TON_NOM_UTILISATEUR\AppData\Local\Android\Sdk\emulator
+```
+
+⚠️ Sans le `\emulator.exe` à la fin !
+
+**Workflow quotidien :**
+
+1. **Ctrl+Alt+E** — lance l'émulateur depuis VSCode
+2. Attends que l'émulateur soit **complètement booté** (écran Android visible)
+3. `pnpm dev:android` dans le terminal
+4. C'est tout ! 🚀
+
+> Android Studio doit rester installé pour gérer les virtual devices (AVD Manager), mais plus besoin de l'ouvrir au quotidien.
+
 ### 1. Installer les dépendances
 
 ```bash

@@ -15,40 +15,6 @@ export async function pickParentDir(): Promise<string | null> {
   return parentUri
 }
 
-// S'assurer que le sous-dossier existe
-// export async function ensureSubdir(parentUri: string): Promise<string> {
-//   const parentLower = decodeURIComponent(parentUri).toLowerCase()
-//   const baseName = parentLower.split("/").pop() || ""
-//   if (baseName === SAF_SUBDIR_NAME.toLowerCase()) {
-//     await AsyncStorage.setItem(SAF_SUBDIR_KEY, parentUri)
-//     return parentUri
-//   }
-
-//   try {
-//     const entries = await FileSystem.StorageAccessFramework.readDirectoryAsync(parentUri)
-//     const existing = entries.find((u) => {
-//       const name = decodeURIComponent(u).split("/").pop() || ""
-//       return name.toLowerCase() === SAF_SUBDIR_NAME.toLowerCase()
-//     })
-//     if (existing) {
-//       await AsyncStorage.setItem(SAF_SUBDIR_KEY, existing)
-//       return existing
-//     }
-//   } catch {}
-
-//   try {
-//     // @ts-ignore
-//     const created = await FileSystem.StorageAccessFramework.makeDirectoryAsync(parentUri, SAF_SUBDIR_NAME)
-//     if (created) {
-//       await AsyncStorage.setItem(SAF_SUBDIR_KEY, created)
-//       return created
-//     }
-//   } catch {}
-
-//   await AsyncStorage.setItem(SAF_SUBDIR_KEY, parentUri)
-//   return parentUri
-// }
-
 // Récupérer le chemin actuel
 export async function getCurrentSafDir(): Promise<string | null> {
   return (await AsyncStorage.getItem(SAF_SUBDIR_KEY)) || null
