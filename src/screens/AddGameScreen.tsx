@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { View, Text, TextInput, Button, TouchableOpacity, StyleSheet, Platform, Alert, Modal } from "react-native"
 import DateTimePicker from "@react-native-community/datetimepicker"
 import { usePlayerStore } from "@stores/playerStore"
@@ -43,6 +43,17 @@ export default function AddGameScreen({ navigation }: Props) {
   const [scoreB, setScoreB] = useState<string>("")
   const [isModalVisible, setIsModalVisible] = useState(false)
   const [winnerOnTie, setWinnerOnTie] = useState<"A" | "B" | "draw" | null>(null)
+
+  useEffect(() => {
+    navigation.getParent()?.setOptions({ tabBarStyle: { display: "none" } })
+    return () =>
+      navigation.getParent()?.setOptions({
+        tabBarStyle: {
+          backgroundColor: isDark ? "#000" : "#fff",
+          borderTopColor: isDark ? "#111" : "#ccc",
+        },
+      })
+  }, [])
 
   /**
    * onChangeDate :
