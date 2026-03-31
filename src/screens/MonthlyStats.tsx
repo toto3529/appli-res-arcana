@@ -64,10 +64,10 @@ const MonthlyStats = ({ games }: Props) => {
 
           {/* Série de victoires en cours */}
           <View style={styles.block}>
-            <Text style={styles.blockTitle}>📈 Série de victoires en cours</Text>
+            <Text style={styles.blockTitle}>Série de victoires en cours</Text>
             <Text style={styles.blockText}>
               {currentStreak.count > 0
-                ? `${currentStreak.player === "A" ? playerA : playerB} – ${currentStreak.count} victoire${currentStreak.count > 1 ? "s" : ""}`
+                ? `${currentStreak.player === "A" ? playerA : playerB} : ${currentStreak.count} victoire${currentStreak.count > 1 ? "s" : ""}`
                 : "ni l'un ni l'autre 😅"}
             </Text>
           </View>
@@ -78,26 +78,30 @@ const MonthlyStats = ({ games }: Props) => {
             <View style={styles.winRateBar}>
               {stats.winRateA > 0 && (
                 <View style={[styles.winRateSegmentA, { flex: stats.winRateA }]}>
-                  <Text style={styles.winRateSegmentText}>{stats.winRateA}%</Text>
+                  <Text style={styles.winRateSegmentText}>{stats.winA}</Text>
                 </View>
               )}
               {stats.drawRate > 0 && (
                 <View style={[styles.winRateSegmentDraw, { flex: stats.drawRate }]}>
-                  <Text style={styles.winRateSegmentText}>{stats.drawRate}%</Text>
+                  <Text style={styles.winRateSegmentText}>{stats.draws}</Text>
                 </View>
               )}
               {stats.winRateB > 0 && (
                 <View style={[styles.winRateSegmentB, { flex: stats.winRateB }]}>
-                  <Text style={styles.winRateSegmentText}>{stats.winRateB}%</Text>
+                  <Text style={styles.winRateSegmentText}>{stats.winB}</Text>
                 </View>
               )}
             </View>
             <View style={styles.row}>
               <View style={styles.half}>
-                <Text style={styles.label}>{playerA}</Text>
+                <Text style={styles.label}>
+                  {playerA} : {stats.winA} victoires
+                </Text>
               </View>
               <View style={styles.half}>
-                <Text style={[styles.label, { textAlign: "right" }]}>{playerB}</Text>
+                <Text style={[styles.label, { textAlign: "right" }]}>
+                  {playerB} : {stats.winB} victoires
+                </Text>
               </View>
             </View>
           </View>
@@ -117,9 +121,9 @@ const MonthlyStats = ({ games }: Props) => {
             </View>
           </View>
 
-          {/* Historique des dernières parties */}
+          {/* Historique des 5 dernières parties */}
           <View style={styles.block}>
-            <Text style={styles.blockTitle}>Historique des dernières parties</Text>
+            <Text style={styles.blockTitle}>Historique des 5 dernières parties</Text>
             <View style={styles.historyRow}>
               <View style={styles.historyColumn}>
                 <Text style={styles.blockText}>{playerA}</Text>
@@ -161,15 +165,15 @@ const MonthlyStats = ({ games }: Props) => {
 
           {/* Meilleure victoire */}
           <View style={styles.block}>
-            <Text style={styles.blockTitle}>Meilleure victoire</Text>
+            <Text style={styles.blockTitle}>Meilleure victoire (écart)</Text>
             <View style={styles.rowBetween}>
               <View style={styles.playerStat}>
                 <Text style={styles.blockSubtitle}>{playerA}</Text>
-                <Text style={styles.blockText}>{stats.bestVictoryA} pts</Text>
+                <Text style={styles.blockText}>+{stats.bestVictoryA} pts</Text>
               </View>
               <View style={styles.playerStat}>
                 <Text style={styles.blockSubtitle}>{playerB}</Text>
-                <Text style={styles.blockText}>{stats.bestVictoryB} pts</Text>
+                <Text style={styles.blockText}>+{stats.bestVictoryB} pts</Text>
               </View>
             </View>
           </View>

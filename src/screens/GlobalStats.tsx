@@ -42,32 +42,36 @@ export const GlobalStats = ({ games }: Props) => {
         </Text>
       </View>
 
-      {/* Nombre total de parties + % victoires */}
+      {/* Nombre total de parties */}
       <View style={styles.block}>
         <Text style={styles.blockTitle}>Nombre de parties : {stats.totalGames}</Text>
         <View style={styles.winRateBar}>
           {stats.rawRateA > 0 && (
             <View style={[styles.winRateSegmentA, { flex: stats.rawRateA }]}>
-              <Text style={styles.winRateSegmentText}>{stats.rawRateA}%</Text>
+              <Text style={styles.winRateSegmentText}>{stats.winA}</Text>
             </View>
           )}
           {stats.drawRate > 0 && (
             <View style={[styles.winRateSegmentDraw, { flex: stats.drawRate }]}>
-              <Text style={styles.winRateSegmentText}>{stats.drawRate}%</Text>
+              <Text style={styles.winRateSegmentText}>{stats.draws}</Text>
             </View>
           )}
           {stats.rawRateB > 0 && (
             <View style={[styles.winRateSegmentB, { flex: stats.rawRateB }]}>
-              <Text style={styles.winRateSegmentText}>{stats.rawRateB}%</Text>
+              <Text style={styles.winRateSegmentText}>{stats.winB}</Text>
             </View>
           )}
         </View>
         <View style={styles.row}>
           <View style={styles.half}>
-            <Text style={styles.label}>{playerA}</Text>
+            <Text style={styles.label}>
+              {playerA} : {stats.winA} victoires
+            </Text>
           </View>
           <View style={styles.half}>
-            <Text style={[styles.label, { textAlign: "right" }]}>{playerB}</Text>
+            <Text style={[styles.label, { textAlign: "right" }]}>
+              {playerB} : {stats.winB} victoires
+            </Text>
           </View>
         </View>
       </View>
@@ -101,11 +105,11 @@ export const GlobalStats = ({ games }: Props) => {
         <View style={styles.row}>
           <View style={styles.column}>
             <Text style={styles.blockSubtitle}>{playerA}</Text>
-            <Text style={styles.blockText}>{stats.bestVictoryA}</Text>
+            <Text style={styles.blockText}>+{stats.bestVictoryA}</Text>
           </View>
           <View style={styles.column}>
             <Text style={styles.blockSubtitle}>{playerB}</Text>
-            <Text style={styles.blockText}>{stats.bestVictoryB}</Text>
+            <Text style={styles.blockText}>+{stats.bestVictoryB}</Text>
           </View>
         </View>
       </View>
