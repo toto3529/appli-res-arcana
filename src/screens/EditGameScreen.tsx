@@ -8,6 +8,7 @@ import GameModel from "src/models/GameModel"
 import { formatDateFr } from "@utils/formatDate"
 import { usePlayerStore } from "@stores/playerStore"
 import { useAppStyles } from "src/styles/useAppStyles"
+import ConfirmModal from "@components/ConfirmModal"
 
 type Props = NativeStackScreenProps<RootStackParamList, "EditGame">
 
@@ -20,6 +21,7 @@ export default function EditGameScreen({ route, navigation }: Props) {
   const [scoreA, setScoreA] = useState("")
   const [scoreB, setScoreB] = useState("")
   const [winnerOnTie, setWinnerOnTie] = useState<"A" | "B" | "draw" | null>(null)
+  const [isSuccessModalVisible, setIsSuccessModalVisible] = useState(false)
   const [isModalVisible, setIsModalVisible] = useState(false)
   const { playerA, playerB } = usePlayerStore()
   const styles = useAppStyles()
@@ -91,8 +93,7 @@ export default function EditGameScreen({ route, navigation }: Props) {
       })
     })
 
-    Alert.alert("✅ Modifié", "La partie a bien été mise à jour.")
-    navigation.goBack()
+    setIsSuccessModalVisible(true)
   }
 
   return (
@@ -180,6 +181,21 @@ export default function EditGameScreen({ route, navigation }: Props) {
           </View>
         </View>
       </Modal>
+      <ConfirmModal
+        visible={isSuccessModalVisible}
+        title="✅ Modifié"
+        message="La partie a bien été mise à jour."
+        confirmLabel="OK"
+        cancelLabel=""
+        onConfirm={() => {
+          setIsSuccessModalVisible(false)
+          navigation.goBack()
+        }}
+        onCancel={() => {
+          setIsSuccessModalVisible(false)
+          navigation.goBack()
+        }}
+      />
     </ScrollView>
   )
 }

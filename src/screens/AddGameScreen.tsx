@@ -5,7 +5,6 @@ import { usePlayerStore } from "@stores/playerStore"
 import { useGameStore } from "@stores/gameStore"
 import { NativeStackScreenProps } from "@react-navigation/native-stack"
 import { RootStackParamList } from "src/navigation/types"
-import { useThemeStore } from "@stores/themeStore"
 import { formatDateFr } from "@utils/formatDate"
 import { useFocusEffect } from "@react-navigation/native"
 import { useAppStyles } from "src/styles/useAppStyles"
@@ -14,8 +13,6 @@ import { useAppStyles } from "src/styles/useAppStyles"
 type Props = NativeStackScreenProps<RootStackParamList, "AddGame">
 
 export default function AddGameScreen({ navigation }: Props) {
-  const isDark = useThemeStore((s) => s.isDark())
-
   // On récupère les noms de joueurs depuis le store persistant
   const playerA = usePlayerStore((s) => s.playerA)
   const playerB = usePlayerStore((s) => s.playerB)

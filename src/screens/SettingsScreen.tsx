@@ -9,6 +9,7 @@ import { useCallback, useEffect, useState } from "react"
 import { getCurrentSafDir, resetSafLocation } from "@utils/safStorage"
 import { useFocusEffect } from "@react-navigation/native"
 import { useAppStyles } from "src/styles/useAppStyles"
+import ConfirmModal from "@components/ConfirmModal"
 
 export default function SettingsScreen() {
   const insets = useSafeAreaInsets()
@@ -22,6 +23,8 @@ export default function SettingsScreen() {
   const setPlayerA = usePlayerStore((s) => s.setPlayerA)
   const setPlayerB = usePlayerStore((s) => s.setPlayerB)
   const [currentPath, setCurrentPath] = useState<string | null>(null)
+  const [isResetStatsModalVisible, setIsResetStatsModalVisible] = useState(false)
+  const [isResetFolderModalVisible, setIsResetFolderModalVisible] = useState(false)
   const styles = useAppStyles()
 
   useEffect(() => {
@@ -39,23 +42,22 @@ export default function SettingsScreen() {
   }
 
   const handleResetStats = () => {
-    Alert.alert("Confirmation", "Voulez-vous vraiment supprimer toutes les statistiques ?", [
-      { text: "Annuler", style: "cancel" },
-      {
-        text: "Oui",
-        style: "destructive",
-        onPress: async () => {
-          await resetStats()
-          Alert.alert("✅ Terminé", "Toutes les parties ont été supprimées.")
-        },
-      },
-    ])
+    setIsResetStatsModalVisible(true)
   }
 
-  const handleResetFolder = async () => {
+  const handleResetFolder = () => {
+    setIsResetFolderModalVisible(true)
+  }
+
+  const doResetStats = async () => {
+    await resetStats()
+    setIsResetStatsModalVisible(false)
+  }
+
+  const doResetFolder = async () => {
     await resetSafLocation()
     setCurrentPath(null)
-    Alert.alert("Réinitialisé", "Le dossier de sauvegarde sera redemandé au prochain export.")
+    setIsResetFolderModalVisible(false)
   }
 
   return (
@@ -112,6 +114,27 @@ export default function SettingsScreen() {
           <Text style={styles.settingsButtonTextDanger}>🗑️ Reset stats</Text>
         </TouchableOpacity>
       </View>
+      <ConfirmModal
+        visible={isResetStatsModalVisible}
+        title="Reset Stats"
+        message="Voulez-vous vraiment supprimer toutes les statistiques ?"
+        confirmLabel="Supprimer"
+        cancelLabel="Annuler"
+        danger={true}
+        onConfirm={doResetStats}
+        onCancel={() => setIsResetStatsModalVisible(false)}
+      />
+
+      <ConfirmModal
+        visible={isResetFolderModalVisible}
+        title="Réinitialiser dossier"
+        message="Le dossier de sauvegarde sera redemandé au prochain export."
+        confirmLabel="Réinitialiser"
+        cancelLabel="Annuler"
+        danger={true}
+        onConfirm={doResetFolder}
+        onCancel={() => setIsResetFolderModalVisible(false)}
+      />
     </ScrollView>
   )
 }

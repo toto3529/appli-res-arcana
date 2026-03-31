@@ -1,5 +1,5 @@
-import { useCallback, useRef } from "react"
-import { View, Text, TouchableOpacity, Alert, LayoutAnimation } from "react-native"
+import { useCallback, useRef, useState } from "react"
+import { View, Text, TouchableOpacity, LayoutAnimation } from "react-native"
 import { useFocusEffect } from "@react-navigation/native"
 import { SwipeListView, SwipeRow } from "react-native-swipe-list-view"
 import { format } from "date-fns"
@@ -8,6 +8,7 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack"
 import { RootStackParamList } from "src/navigation/types"
 import { usePlayerStore } from "@stores/playerStore"
 import { useAppStyles } from "src/styles/useAppStyles"
+import ConfirmModal from "@components/ConfirmModal"
 
 type Props = NativeStackScreenProps<RootStackParamList, "HomeMain">
 
@@ -18,6 +19,7 @@ export default function HomeScreen({ navigation }: Props) {
   const deleteGame = useGameStore((s) => s.deleteGame)
   const listRef = useRef<SwipeListView<any>>(null)
   const openRowRef = useRef<SwipeRow<any> | null>(null)
+  const [deleteModalId, setDeleteModalId] = useState<string | null>(null)
   const { playerA, playerB } = usePlayerStore()
   const styles = useAppStyles()
 
@@ -34,17 +36,7 @@ export default function HomeScreen({ navigation }: Props) {
   }
 
   const confirmDelete = (id: string) => {
-    Alert.alert("Supprimer la partie", "Voulez-vous vraiment supprimer cette partie ?", [
-      { text: "Annuler", style: "cancel" },
-      {
-        text: "Supprimer",
-        style: "destructive",
-        onPress: () => {
-          LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut)
-          deleteGame(id)
-        },
-      },
-    ])
+    setDeleteModalId(id)
   }
 
   // On trie & slice les 20 dernières parties
@@ -146,6 +138,22 @@ export default function HomeScreen({ navigation }: Props) {
           <Text style={styles.fabText}>+</Text>
         </TouchableOpacity>
       </View>
+      <ConfirmModal
+        visible={deleteModalId !== null}
+        title="Supprimer la partie"
+        message="Voulez-vous vraiment supprimer cette partie ?"
+        confirmLabel="Supprimer"
+        cancelLabel="Annuler"
+        danger={true}
+        onConfirm={() => {
+          if (deleteModalId) {
+            LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut)
+            deleteGame(deleteModalId)
+          }
+          setDeleteModalId(null)
+        }}
+        onCancel={() => setDeleteModalId(null)}
+      />
     </View>
   )
 }

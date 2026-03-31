@@ -212,6 +212,19 @@ export const useAppStyles = () => {
       color: "#000",
       fontWeight: "bold",
     },
+    confirmModalTitle: {
+      fontSize: 18,
+      fontWeight: "bold",
+      marginBottom: 8,
+      color: textMain,
+      textAlign: "center",
+    },
+    confirmModalMessage: {
+      fontSize: 14,
+      color: textSecondary,
+      textAlign: "center",
+      marginBottom: 20,
+    },
 
     // === BLOCS / CARDS ===
     block: {
