@@ -68,6 +68,12 @@
     ]
   },
   "expo": {
+    "install": {
+      "exclude": [
+        "react-native-bootsplash",
+        "react-native-svg"
+      ]
+    },
     "doctor": {
       "reactNativeDirectoryCheck": {
         "exclude": [
