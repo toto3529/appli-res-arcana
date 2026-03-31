@@ -1,32 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-  <style name="AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
-    <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
-    <item name="android:statusBarColor">@android:color/transparent</item>
-    <item name="android:navigationBarColor">@android:color/transparent</item>
-    <item name="android:windowTranslucentStatus">false</item>
-    <item name="android:windowTranslucentNavigation">false</item>
-    <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+<resources xmlns:tools="http://schemas.android.com/tools">
+  <style name="AppTheme" parent="Theme.EdgeToEdge">
+    <item name="android:editTextBackground">@drawable/rn_edit_text_material</item>
+    <item name="colorPrimary">@color/colorPrimary</item>
+    <item name="android:statusBarColor">#ffffff</item>
   </style>
-
-  <style name="Theme.EdgeToEdge" parent="Theme.AppCompat.DayNight.NoActionBar">
-    <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
-    <item name="android:statusBarColor">@android:color/transparent</item>
-    <item name="android:navigationBarColor">@android:color/transparent</item>
-    <item name="android:windowTranslucentStatus">false</item>
-    <item name="android:windowTranslucentNavigation">false</item>
-    <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-  </style>
-
-  <style name="Theme.App.SplashScreen" parent="Theme.EdgeToEdge">
-    <item name="android:windowBackground">@color/splashscreen_background</item>
-    <item name="android:statusBarColor">@android:color/transparent</item>
-    <item name="android:navigationBarColor">@android:color/transparent</item>
-  </style>
-
-  <style name="BootTheme" parent="Theme.BootSplash">
-    <item name="bootSplashBackground">@color/bootsplash_background</item>
-    <item name="bootSplashLogo">@drawable/bootsplash_logo</item>
-    <item name="postBootSplashTheme">@style/AppTheme</item>
+  <style name="Theme.App.SplashScreen" parent="AppTheme">
+    <item name="android:windowBackground">@drawable/ic_launcher_background</item>
   </style>
 </resources>
