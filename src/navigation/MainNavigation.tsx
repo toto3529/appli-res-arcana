@@ -1,4 +1,4 @@
-import { NavigationContainer } from "@react-navigation/native"
+import { getFocusedRouteNameFromRoute, NavigationContainer } from "@react-navigation/native"
 import { BottomTabBarButtonProps, createBottomTabNavigator } from "@react-navigation/bottom-tabs"
 import { createNativeStackNavigator } from "@react-navigation/native-stack"
 
@@ -78,10 +78,16 @@ export default function MainNavigation() {
         initialRouteName="HomeTab"
         screenOptions={({ route }) => ({
           headerShown: false,
-          tabBarStyle: {
-            backgroundColor: isDark ? "#000" : "#fff",
-            borderTopColor: isDark ? "#111" : "#ccc",
-          },
+          tabBarStyle: ((route) => {
+            const routeName = getFocusedRouteNameFromRoute(route) ?? ""
+            if (routeName === "AddGame" || routeName === "EditGame") {
+              return { display: "none" }
+            }
+            return {
+              backgroundColor: isDark ? "#000" : "#fff",
+              borderTopColor: isDark ? "#111" : "#ccc",
+            }
+          })(route),
           tabBarActiveTintColor: "#C9A84C",
           tabBarInactiveTintColor: isDark ? "#888" : "#777",
           tabBarButton: (props) => <TabBarButton {...props} />,

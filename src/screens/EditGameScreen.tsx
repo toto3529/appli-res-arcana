@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react"
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Modal, Platform, ScrollView } from "react-native"
+import { View, Text, TextInput, TouchableOpacity, Alert, Modal, Platform, ScrollView } from "react-native"
 import DateTimePicker from "@react-native-community/datetimepicker"
 import { NativeStackScreenProps } from "@react-navigation/native-stack"
 import { RootStackParamList } from "src/navigation/types"
 import { database } from "src/db/database"
 import GameModel from "src/models/GameModel"
-import { useThemeStore } from "@stores/themeStore"
 import { formatDateFr } from "@utils/formatDate"
 import { usePlayerStore } from "@stores/playerStore"
 import { useAppStyles } from "src/styles/useAppStyles"
@@ -13,7 +12,6 @@ import { useAppStyles } from "src/styles/useAppStyles"
 type Props = NativeStackScreenProps<RootStackParamList, "EditGame">
 
 export default function EditGameScreen({ route, navigation }: Props) {
-  const isDark = useThemeStore((s) => s.isDark())
   const { id } = route.params
   const [game, setGame] = useState<GameModel | null>(null)
   const [date, setDate] = useState(new Date())
@@ -25,17 +23,6 @@ export default function EditGameScreen({ route, navigation }: Props) {
   const [isModalVisible, setIsModalVisible] = useState(false)
   const { playerA, playerB } = usePlayerStore()
   const styles = useAppStyles()
-
-  useEffect(() => {
-    navigation.getParent()?.setOptions({ tabBarStyle: { display: "none" } })
-    return () =>
-      navigation.getParent()?.setOptions({
-        tabBarStyle: {
-          backgroundColor: isDark ? "#000" : "#fff",
-          borderTopColor: isDark ? "#111" : "#ccc",
-        },
-      })
-  }, [])
 
   useEffect(() => {
     const load = async () => {

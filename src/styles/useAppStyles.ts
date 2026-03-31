@@ -191,9 +191,11 @@ export const useAppStyles = () => {
     modalCancelButton: {
       flex: 1,
       paddingVertical: 12,
-      backgroundColor: isDark ? "#2a2a2a" : "#e0e0e0",
+      backgroundColor: isDark ? "#2a2a2a" : "#fff",
       borderRadius: 8,
       alignItems: "center",
+      borderWidth: 1,
+      borderColor: border,
     },
     modalCancelText: {
       color: textMain,

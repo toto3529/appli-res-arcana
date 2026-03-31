@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react"
+import { useState, useCallback } from "react"
 import { View, Text, TextInput, TouchableOpacity, Platform, Alert, Modal, ScrollView } from "react-native"
 import DateTimePicker from "@react-native-community/datetimepicker"
 import { usePlayerStore } from "@stores/playerStore"
@@ -36,17 +36,6 @@ export default function AddGameScreen({ navigation }: Props) {
   const [scoreB, setScoreB] = useState<string>("")
   const [isModalVisible, setIsModalVisible] = useState(false)
   const [winnerOnTie, setWinnerOnTie] = useState<"A" | "B" | "draw" | null>(null)
-
-  useEffect(() => {
-    navigation.getParent()?.setOptions({ tabBarStyle: { display: "none" } })
-    return () =>
-      navigation.getParent()?.setOptions({
-        tabBarStyle: {
-          backgroundColor: isDark ? "#000" : "#fff",
-          borderTopColor: isDark ? "#111" : "#ccc",
-        },
-      })
-  }, [])
 
   useFocusEffect(
     useCallback(() => {
@@ -198,7 +187,13 @@ export default function AddGameScreen({ navigation }: Props) {
             })}
 
             <View style={styles.modalActions}>
-              <TouchableOpacity style={styles.modalCancelButton} onPress={() => setIsModalVisible(false)}>
+              <TouchableOpacity
+                style={styles.modalCancelButton}
+                onPress={() => {
+                  setWinnerOnTie(null)
+                  setIsModalVisible(false)
+                }}
+              >
                 <Text style={styles.modalCancelText}>Annuler</Text>
               </TouchableOpacity>
               <TouchableOpacity
