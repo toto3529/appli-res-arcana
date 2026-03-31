@@ -28,7 +28,9 @@ function slicePath(cx: number, cy: number, r: number, startAngle: number, endAng
 
 function labelPosition(cx: number, cy: number, r: number, startAngle: number, endAngle: number) {
   const midAngle = startAngle + (endAngle - startAngle) / 2
-  return polarToCartesian(cx, cy, r * 0.65, midAngle)
+  const angleSize = endAngle - startAngle
+  const ratio = angleSize > 180 ? 0.65 : angleSize > 90 ? 0.7 : angleSize > 40 ? 0.72 : 0.85
+  return polarToCartesian(cx, cy, r * ratio, midAngle)
 }
 
 export default function PieChart({ valueA, valueB, valueDraw, labelA, labelB, isDark }: Props) {
@@ -57,19 +59,19 @@ export default function PieChart({ valueA, valueB, valueDraw, labelA, labelB, is
         {valueA > 0 && <Path d={slicePath(cx, cy, r, startA, startA + angleA)} fill="#4CAF50" />}
         {valueDraw > 0 && <Path d={slicePath(cx, cy, r, startDraw, startDraw + angleDraw)} fill="#C9A84C" />}
         {valueB > 0 && <Path d={slicePath(cx, cy, r, startB, startB + angleB)} fill="#e74c3c" />}
-        <Circle cx={cx} cy={cy} r={30} fill="#1e1e1e" />
+        <Circle cx={cx} cy={cy} r={30} fill={isDark ? "#1e1e1e" : "#e5e5e5"} />
 
-        {valueA > 5 && (
+        {valueA > 8 && (
           <SvgText x={posA.x} y={posA.y} fill="#000" fontSize="11" fontWeight="bold" textAnchor="middle" alignmentBaseline="middle">
             {valueA}%
           </SvgText>
         )}
-        {valueDraw > 5 && (
+        {valueDraw > 8 && (
           <SvgText x={posDraw.x} y={posDraw.y} fill="#000" fontSize="11" fontWeight="bold" textAnchor="middle" alignmentBaseline="middle">
             {valueDraw}%
           </SvgText>
         )}
-        {valueB > 5 && (
+        {valueB > 8 && (
           <SvgText x={posB.x} y={posB.y} fill="#000" fontSize="11" fontWeight="bold" textAnchor="middle" alignmentBaseline="middle">
             {valueB}%
           </SvgText>
