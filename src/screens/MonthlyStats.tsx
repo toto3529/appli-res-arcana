@@ -19,8 +19,8 @@ const MonthlyStats = ({ games }: Props) => {
 
   const currentDate = useMemo(() => {
     const now = new Date()
-    now.setMonth(now.getMonth() + currentMonthOffset)
-    return now
+    const date = new Date(now.getFullYear(), now.getMonth() + currentMonthOffset, 1)
+    return date
   }, [currentMonthOffset])
 
   const filteredGames = useMemo(() => getFilteredGamesByMonth(games, currentDate), [games, currentDate])
