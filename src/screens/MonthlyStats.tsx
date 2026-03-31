@@ -52,12 +52,12 @@ const MonthlyStats = ({ games }: Props) => {
             <Text style={styles.blockTitle}>Score du mois</Text>
             <View style={styles.row}>
               <View style={styles.column}>
-                <Text style={styles.playerName}>{playerA}</Text>
-                <Text style={styles.playerValue}>{stats.totalPointsA} pts</Text>
+                <Text style={styles.blockSubtitle}>{playerA}</Text>
+                <Text style={styles.blockText}>{stats.totalPointsA} pts</Text>
               </View>
               <View style={styles.column}>
-                <Text style={styles.playerName}>{playerB}</Text>
-                <Text style={styles.playerValue}>{stats.totalPointsB} pts</Text>
+                <Text style={styles.blockSubtitle}>{playerB}</Text>
+                <Text style={styles.blockText}>{stats.totalPointsB} pts</Text>
               </View>
             </View>
           </View>
@@ -149,11 +149,11 @@ const MonthlyStats = ({ games }: Props) => {
             <Text style={styles.blockTitle}>Moyenne de points / partie</Text>
             <View style={styles.row}>
               <View style={styles.column}>
-                <Text style={styles.playerName}>{playerA}</Text>
+                <Text style={styles.blockSubtitle}>{playerA}</Text>
                 <Text style={styles.blockText}>{stats.avgScoreA} pts</Text>
               </View>
               <View style={styles.column}>
-                <Text style={styles.playerName}>{playerB}</Text>
+                <Text style={styles.blockSubtitle}>{playerB}</Text>
                 <Text style={styles.blockText}>{stats.avgScoreB} pts</Text>
               </View>
             </View>
@@ -164,11 +164,11 @@ const MonthlyStats = ({ games }: Props) => {
             <Text style={styles.blockTitle}>Meilleure victoire</Text>
             <View style={styles.rowBetween}>
               <View style={styles.playerStat}>
-                <Text style={styles.playerName}>{playerA}</Text>
+                <Text style={styles.blockSubtitle}>{playerA}</Text>
                 <Text style={styles.blockText}>{stats.bestVictoryA} pts</Text>
               </View>
               <View style={styles.playerStat}>
-                <Text style={styles.playerName}>{playerB}</Text>
+                <Text style={styles.blockSubtitle}>{playerB}</Text>
                 <Text style={styles.blockText}>{stats.bestVictoryB} pts</Text>
               </View>
             </View>
