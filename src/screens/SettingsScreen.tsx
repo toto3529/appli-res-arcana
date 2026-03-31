@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, Switch, Alert, TextInput, TouchableOpacity } from "react-native"
+import { View, Text, ScrollView, Switch, TextInput, TouchableOpacity } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { useThemeStore } from "@stores/themeStore"
 import { useGameStore } from "@stores/gameStore"
@@ -25,6 +25,7 @@ export default function SettingsScreen() {
   const [currentPath, setCurrentPath] = useState<string | null>(null)
   const [isResetStatsModalVisible, setIsResetStatsModalVisible] = useState(false)
   const [isResetFolderModalVisible, setIsResetFolderModalVisible] = useState(false)
+  const [resultModal, setResultModal] = useState<{ title: string; message: string } | null>(null)
   const styles = useAppStyles()
 
   useEffect(() => {
@@ -82,7 +83,13 @@ export default function SettingsScreen() {
 
       {/* Bloc 3 - Import CSV */}
       <View style={styles.block}>
-        <TouchableOpacity style={[styles.settingsButton, styles.settingsButtonPrimary]} onPress={async () => await importGamesFromCSV()}>
+        <TouchableOpacity
+          style={[styles.settingsButton, styles.settingsButtonPrimary]}
+          onPress={async () => {
+            const result = await importGamesFromCSV()
+            setResultModal({ title: result.title, message: result.message })
+          }}
+        >
           <Text style={styles.settingsButtonText}>📥 Import save (.csv)</Text>
         </TouchableOpacity>
       </View>
@@ -92,8 +99,9 @@ export default function SettingsScreen() {
         <TouchableOpacity
           style={[styles.settingsButton, styles.settingsButtonPrimary]}
           onPress={async () => {
-            const dir = await exportGamesToCSV(games)
-            if (dir) setCurrentPath(dir)
+            const result = await exportGamesToCSV(games)
+            if (result.dirUri) setCurrentPath(result.dirUri)
+            setResultModal({ title: result.title, message: result.message })
           }}
         >
           <Text style={styles.settingsButtonText}>📤 Export save (.csv)</Text>
@@ -134,6 +142,16 @@ export default function SettingsScreen() {
         danger={true}
         onConfirm={doResetFolder}
         onCancel={() => setIsResetFolderModalVisible(false)}
+      />
+
+      <ConfirmModal
+        visible={resultModal !== null}
+        title={resultModal?.title ?? ""}
+        message={resultModal?.message ?? ""}
+        confirmLabel="OK"
+        cancelLabel=""
+        onConfirm={() => setResultModal(null)}
+        onCancel={() => setResultModal(null)}
       />
     </ScrollView>
   )

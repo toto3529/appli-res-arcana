@@ -4,67 +4,59 @@ import * as FileSystem from "expo-file-system"
 import { database } from "src/db/database"
 import GameModel from "src/models/GameModel"
 import { generateUUID } from "./uuid"
-import { Alert } from "react-native"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { isRealGame } from "./gameFilters"
 
 const SAF_SUBDIR_KEY = "resarcana.saf.subdir.uri"
 
 const tryParse = (s: string) => {
-  // 1) on tente date + heure
   let d = parse(s, "dd/MM/yyyy HH:mm", new Date(), { locale: fr })
   if (!Number.isFinite(d.getTime())) {
-    // 2) fallback: ancienne version (date seule)
     d = parse(s, "dd/MM/yyyy", new Date(), { locale: fr })
   }
   return d
 }
 
-export const importGamesFromCSV = async () => {
+export type ImportResult = {
+  success: boolean
+  title: string
+  message: string
+}
+
+export const importGamesFromCSV = async (): Promise<ImportResult> => {
   try {
     let csvContent: string | null = null
     let latestLabel: string = ""
 
-    // helper robuste: extrait VRAI nom de fichier depuis une URI SAF
     const getFileName = (u: string) => {
       const dec = decodeURIComponent(u || "")
-      // ex: content://.../document/primary:Download/ResArcanaSave/res-arcana-games-...csv
-      //     -> on prend après le dernier ':' puis après le dernier '/'
       const afterColon = dec.split(":").pop() || dec
       const name = afterColon.split("/").pop() || afterColon
       return name
     }
 
-    // 1) Lire le dossier choisi (le même que pour l'export)
     const dirUri = await AsyncStorage.getItem(SAF_SUBDIR_KEY)
 
     if (dirUri) {
       try {
         const uris = await FileSystem.StorageAccessFramework.readDirectoryAsync(dirUri)
-
-        const entries = uris.map((u) => ({ uri: u, name: getFileName(u) })).filter((e) => e.name.toLowerCase().endsWith(".csv")) // on ne force plus le startsWith
+        const entries = uris.map((u) => ({ uri: u, name: getFileName(u) })).filter((e) => e.name.toLowerCase().endsWith(".csv"))
 
         if (entries.length > 0) {
-          // tri lexicographique (ok car nom = res-arcana-games-YYYY-MM-dd_HH-mm-ss.csv)
           entries.sort((a, b) => b.name.localeCompare(a.name))
           const latest = entries[0]
-
           // @ts-ignore
           csvContent = await FileSystem.StorageAccessFramework.readAsStringAsync(latest.uri, {
             encoding: FileSystem.EncodingType.UTF8,
           })
           latestLabel = latest.name
         }
-      } catch (e) {
-        // on tombera sur le fallback documentDirectory si nécessaire
-      }
+      } catch (e) {}
     }
 
-    // 2) Fallback: ancien répertoire interne de l’app
     if (!csvContent) {
       const dir = FileSystem.documentDirectory || ""
       const files = await FileSystem.readDirectoryAsync(dir)
-
       const csvFiles = files
         .filter((f) => f.toLowerCase().endsWith(".csv"))
         .sort()
@@ -73,12 +65,10 @@ export const importGamesFromCSV = async () => {
 
       const latestFile = csvFiles[0]
       const filePath = dir + latestFile
-
       csvContent = await FileSystem.readAsStringAsync(filePath, { encoding: FileSystem.EncodingType.UTF8 })
       latestLabel = latestFile
     }
 
-    // 3) Parse CSV
     const lines = csvContent.replace(/\r\n/g, "\n").replace(/\r/g, "\n").split("\n").slice(1)
 
     const collection = database.get<GameModel>("games")
@@ -113,20 +103,15 @@ export const importGamesFromCSV = async () => {
           else winnerOnTie = "draw"
         }
 
-        // création, protège l'insertion
         const candidate = {
-          // on construit un objet minimal de type Game-like
-          id: "tmp", // valeur jetable, isRealGame ne teste pas l'id
+          id: "tmp",
           date: parsedDate,
           scoreA: scoreANum,
           scoreB: scoreBNum,
           winnerOnTie: winnerOnTie,
         } as any
 
-        // Ignore toute ligne non “réelle”
-        if (!isRealGame(candidate)) {
-          continue
-        }
+        if (!isRealGame(candidate)) continue
 
         const isAlreadyPresent = allGames.some((game) => {
           const sameInstant = new Date(game.date).getTime() === parsedDate.getTime()
@@ -147,15 +132,19 @@ export const importGamesFromCSV = async () => {
       }
     })
 
-    const message =
-      importedCount > 0
-        ? `🎉 Import terminé avec succès !\n\n${importedCount} ${importedCount === 1 ? "nouvelle partie a été ajoutée" : "nouvelles parties ont été ajoutées"} depuis :\n${latestLabel}`
-        : `✅ Import terminé\nAucune nouvelle partie détectée dans :\n${latestLabel}`
-
-    Alert.alert("Import terminé", message)
-    return latestLabel
+    return {
+      success: true,
+      title: "Import terminé",
+      message:
+        importedCount > 0
+          ? `${importedCount} ${importedCount === 1 ? "nouvelle partie a été ajoutée" : "nouvelles parties ont été ajoutées"} depuis :\n${latestLabel}`
+          : `Aucune nouvelle partie détectée dans :\n${latestLabel}`,
+    }
   } catch (error) {
-    Alert.alert("❌ Erreur d'import", (error as Error).message)
-    return null
+    return {
+      success: false,
+      title: "❌ Erreur d'import",
+      message: (error as Error).message,
+    }
   }
 }
