@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { View, Text, TextInput, TouchableOpacity, Alert, Modal, Platform, ScrollView } from "react-native"
+import { View, Text, TextInput, TouchableOpacity, Modal, Platform, ScrollView } from "react-native"
 import DateTimePicker from "@react-native-community/datetimepicker"
 import { NativeStackScreenProps } from "@react-navigation/native-stack"
 import { RootStackParamList } from "src/navigation/types"
@@ -25,6 +25,7 @@ export default function EditGameScreen({ route, navigation }: Props) {
   const [isModalVisible, setIsModalVisible] = useState(false)
   const { playerA, playerB } = usePlayerStore()
   const styles = useAppStyles()
+  const [errorModal, setErrorModal] = useState<string | null>(null)
 
   useEffect(() => {
     const load = async () => {
@@ -38,7 +39,7 @@ export default function EditGameScreen({ route, navigation }: Props) {
     }
     load().catch((e) => {
       console.error("❌ Erreur chargement partie", e)
-      Alert.alert("Erreur", "Impossible de charger la partie.")
+      setErrorModal("Impossible de charger la partie.")
       navigation.goBack()
     })
   }, [id])
@@ -75,7 +76,7 @@ export default function EditGameScreen({ route, navigation }: Props) {
     const b = parseInt(scoreB, 10)
 
     if (isNaN(a) || isNaN(b)) {
-      Alert.alert("Erreur", "Veuillez entrer des scores valides.")
+      setErrorModal("Veuillez saisir deux scores valides.")
       return
     }
 
@@ -117,11 +118,23 @@ export default function EditGameScreen({ route, navigation }: Props) {
 
       {/* Score A */}
       <Text style={styles.formLabel}>Score {playerA} :</Text>
-      <TextInput style={styles.formInput} keyboardType="numeric" value={scoreA} onChangeText={setScoreA} placeholderTextColor={styles.label.color} />
+      <TextInput
+        style={styles.formInput}
+        keyboardType="numeric"
+        value={scoreA}
+        onChangeText={(val) => setScoreA(val.replace(/[^0-9]/g, ""))}
+        placeholderTextColor={styles.label.color}
+      />
 
       {/* Score B */}
       <Text style={styles.formLabel}>Score {playerB} :</Text>
-      <TextInput style={styles.formInput} keyboardType="numeric" value={scoreB} onChangeText={setScoreB} placeholderTextColor={styles.label.color} />
+      <TextInput
+        style={styles.formInput}
+        keyboardType="numeric"
+        value={scoreB}
+        onChangeText={(val) => setScoreB(val.replace(/[^0-9]/g, ""))}
+        placeholderTextColor={styles.label.color}
+      />
 
       {/* Bouton Enregistrer */}
       <View style={styles.formButtonWrapper}>
@@ -195,6 +208,16 @@ export default function EditGameScreen({ route, navigation }: Props) {
           setIsSuccessModalVisible(false)
           navigation.goBack()
         }}
+      />
+
+      <ConfirmModal
+        visible={errorModal !== null}
+        title="❌ Erreur"
+        message={errorModal ?? ""}
+        confirmLabel="OK"
+        cancelLabel=""
+        onConfirm={() => setErrorModal(null)}
+        onCancel={() => setErrorModal(null)}
       />
     </ScrollView>
   )

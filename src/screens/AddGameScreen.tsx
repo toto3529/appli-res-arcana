@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react"
-import { View, Text, TextInput, TouchableOpacity, Platform, Alert, Modal, ScrollView } from "react-native"
+import { View, Text, TextInput, TouchableOpacity, Platform, Modal, ScrollView } from "react-native"
 import DateTimePicker from "@react-native-community/datetimepicker"
 import { usePlayerStore } from "@stores/playerStore"
 import { useGameStore } from "@stores/gameStore"
@@ -8,6 +8,7 @@ import { RootStackParamList } from "src/navigation/types"
 import { formatDateFr } from "@utils/formatDate"
 import { useFocusEffect } from "@react-navigation/native"
 import { useAppStyles } from "src/styles/useAppStyles"
+import ConfirmModal from "@components/ConfirmModal"
 
 // Définition des props de navigation pour TypeScript
 type Props = NativeStackScreenProps<RootStackParamList, "AddGame">
@@ -33,6 +34,7 @@ export default function AddGameScreen({ navigation }: Props) {
   const [scoreB, setScoreB] = useState<string>("")
   const [isModalVisible, setIsModalVisible] = useState(false)
   const [winnerOnTie, setWinnerOnTie] = useState<"A" | "B" | "draw" | null>(null)
+  const [errorModal, setErrorModal] = useState<string | null>(null)
 
   useFocusEffect(
     useCallback(() => {
@@ -78,8 +80,7 @@ export default function AddGameScreen({ navigation }: Props) {
 
     // Vérification basique : scores valides ?
     if (isNaN(a) || isNaN(b)) {
-      Alert.alert("Erreur", "Veuillez saisir deux scores valides.")
-      return
+      setErrorModal("Veuillez saisir deux scores valides.")
     }
 
     // Egalité des scores
@@ -100,7 +101,8 @@ export default function AddGameScreen({ navigation }: Props) {
       navigation.goBack() // revient à l'écran précédent
     } catch (error) {
       console.error("Erreur ajout partie :", error)
-      Alert.alert("Erreur", "Impossible d'ajouter la partie. Réessayez.")
+      setErrorModal("Impossible d'ajouter la partie. Réessayez.")
+      return
     }
   }
 
@@ -129,7 +131,7 @@ export default function AddGameScreen({ navigation }: Props) {
         style={styles.formInput}
         keyboardType="numeric"
         value={scoreA}
-        onChangeText={setScoreA}
+        onChangeText={(val) => setScoreA(val.replace(/[^0-9]/g, ""))}
         placeholder="0"
         placeholderTextColor={styles.label.color}
       />
@@ -140,7 +142,7 @@ export default function AddGameScreen({ navigation }: Props) {
         style={styles.formInput}
         keyboardType="numeric"
         value={scoreB}
-        onChangeText={setScoreB}
+        onChangeText={(val) => setScoreB(val.replace(/[^0-9]/g, ""))}
         placeholder="0"
         placeholderTextColor={styles.label.color}
       />
@@ -207,6 +209,15 @@ export default function AddGameScreen({ navigation }: Props) {
           </View>
         </View>
       </Modal>
+      <ConfirmModal
+        visible={errorModal !== null}
+        title="❌ Erreur"
+        message={errorModal ?? ""}
+        confirmLabel="OK"
+        cancelLabel=""
+        onConfirm={() => setErrorModal(null)}
+        onCancel={() => setErrorModal(null)}
+      />
     </ScrollView>
   )
 }
