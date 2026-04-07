@@ -3,12 +3,21 @@ module.exports = function (api) {
   return {
     presets: ["babel-preset-expo"],
     plugins: [
-      // Gestion des décorateurs en "legacy" (nécessaire pour WatermelonDB)
+      // Nécessaire pour WatermelonDB
       ["@babel/plugin-proposal-decorators", { legacy: true }],
-      // Nécessaire pour les décorateurs de propriétés
-      ["@babel/plugin-proposal-class-properties", { loose: true }],
-      // ce plugin doit toujours être le **dernier**
-      "react-native-worklets/plugin",
+      ["@babel/plugin-transform-class-properties", { loose: true }],
+      // Résolution des alias @stores, @utils, etc.
+      ["module-resolver", {
+        root: ["./src"],
+        alias: {
+          "@stores": "./src/stores",
+          "@utils": "./src/utils",
+          "@components": "./src/components",
+          "@styles": "./src/styles",
+          "@screens": "./src/screens",
+          "@navigation": "./src/navigation",
+        }
+      }]
     ],
   }
 }

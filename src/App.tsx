@@ -22,6 +22,7 @@ export default function App() {
     const init = async () => {
       await loadTheme()
       await loadPlayers()
+			await new Promise(resolve => setTimeout(resolve, 3000))
       setIsReady(true)
       await BootSplash.hide({ fade: true })
     }

@@ -23,6 +23,8 @@ export default function SettingsScreen() {
   const setPlayerA = usePlayerStore((s) => s.setPlayerA)
   const setPlayerB = usePlayerStore((s) => s.setPlayerB)
   const [currentPath, setCurrentPath] = useState<string | null>(null)
+  const [localPlayerA, setLocalPlayerA] = useState(playerA)
+  const [localPlayerB, setLocalPlayerB] = useState(playerB)
   const [isResetStatsModalVisible, setIsResetStatsModalVisible] = useState(false)
   const [isResetFolderModalVisible, setIsResetFolderModalVisible] = useState(false)
   const [resultModal, setResultModal] = useState<{ title: string; message: string } | null>(null)
@@ -77,8 +79,24 @@ export default function SettingsScreen() {
       {/* Bloc 2 - Joueurs */}
       <View style={styles.block}>
         <Text style={styles.blockLabel}>👤 Nom des joueurs</Text>
-        <TextInput placeholder="Joueur A" placeholderTextColor={styles.label.color} value={playerA} onChangeText={setPlayerA} style={styles.input} />
-        <TextInput placeholder="Joueur B" placeholderTextColor={styles.label.color} value={playerB} onChangeText={setPlayerB} style={styles.input} />
+        <TextInput
+          placeholder="Joueur A"
+          placeholderTextColor={styles.label.color}
+          value={localPlayerA}
+          onChangeText={setLocalPlayerA}
+          onBlur={() => setPlayerA(localPlayerA)}
+          style={styles.input}
+          maxLength={20}
+        />
+        <TextInput
+          placeholder="Joueur B"
+          placeholderTextColor={styles.label.color}
+          value={localPlayerB}
+          onChangeText={setLocalPlayerB}
+          onBlur={() => setPlayerB(localPlayerB)}
+          style={styles.input}
+          maxLength={20}
+        />
       </View>
 
       {/* Bloc 3 - Import CSV */}

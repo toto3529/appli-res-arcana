@@ -86,7 +86,9 @@ export default function HomeScreen({ navigation }: Props) {
                 <View style={styles.rowContent}>
                   {/* Joueur A */}
                   <View style={styles.playerBox}>
-                    <Text style={styles.playerName}>{playerA}</Text>
+                    <Text style={styles.playerName} numberOfLines={1} ellipsizeMode="tail">
+                      {playerA}
+                    </Text>
                     <View style={[styles.badge, winA === true ? styles.badgeWin : winA === false ? styles.badgeLoss : styles.badgeDraw]}>
                       <Text
                         style={[styles.badgeText, winA === true ? styles.badgeTextWin : winA === false ? styles.badgeTextLoss : styles.badgeTextDraw]}
@@ -106,7 +108,9 @@ export default function HomeScreen({ navigation }: Props) {
 
                   {/* Joueur B */}
                   <View style={styles.playerBox}>
-                    <Text style={styles.playerName}>{playerB}</Text>
+                    <Text style={styles.playerName} numberOfLines={1} ellipsizeMode="tail">
+                      {playerB}
+                    </Text>
                     <View style={[styles.badge, winA === false ? styles.badgeWin : winA === true ? styles.badgeLoss : styles.badgeDraw]}>
                       <Text
                         style={[styles.badgeText, winA === false ? styles.badgeTextWin : winA === true ? styles.badgeTextLoss : styles.badgeTextDraw]}
