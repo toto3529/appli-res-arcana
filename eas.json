@@ -6,18 +6,20 @@
     "development": {
       "developmentClient": true,
       "distribution": "internal",
-      "pnpm": "10.10.0"
+      "pnpm": "10.14.0"
     },
     "preview": {
       "distribution": "internal",
       "android": {
         "buildType": "apk"
-      }
+      },
+      "pnpm": "10.14.0"
     },
     "production": {
       "android": {
         "buildType": "app-bundle"
-      }
+      },
+      "pnpm": "10.14.0"
     }
   }
 }

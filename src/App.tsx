@@ -10,7 +10,9 @@ import { GestureHandlerRootView } from "react-native-gesture-handler"
 import { useThemeStore } from "@stores/themeStore"
 import { useEffect, useState } from "react"
 import { usePlayerStore } from "@stores/playerStore"
-import BootSplash from "react-native-bootsplash"
+import * as SplashScreen from "expo-splash-screen"
+
+SplashScreen.preventAutoHideAsync()
 
 export default function App() {
   const loadTheme = useThemeStore((s) => s.loadTheme)
@@ -22,9 +24,8 @@ export default function App() {
     const init = async () => {
       await loadTheme()
       await loadPlayers()
-			await new Promise(resolve => setTimeout(resolve, 3000))
       setIsReady(true)
-      await BootSplash.hide({ fade: true })
+      await SplashScreen.hideAsync()
     }
     init()
   }, [])

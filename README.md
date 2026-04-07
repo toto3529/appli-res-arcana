@@ -15,6 +15,15 @@ Application mobile de suivi de scores pour le jeu de cartes **Res Arcana**, dév
 
 ---
 
+## 📸 Screenshots
+
+<p float="left">
+  <img src="assets/screenshots/home.png" width="200"/>
+  <img src="assets/screenshots/stats-monthly.png" width="200"/>
+  <img src="assets/screenshots/stats-global.png" width="200"/>
+  <img src="assets/screenshots/settings.png" width="200"/>
+</p>
+
 ## ⚙️ Prérequis
 
 Avant de commencer, assure-toi d'avoir installé :
@@ -148,7 +157,7 @@ Les noms des joueurs et le thème sont stockés séparément via **AsyncStorage*
 | date-fns                       | Formatage des dates                   |
 | AsyncStorage                   | Persistance légère (thème, joueurs)   |
 | react-native-svg               | Graphiques (camembert stats)          |
-| react-native-bootsplash        | Splash screen natif                   |
+| expo-splash-screen             | Splash screen                         |
 | react-native-swipe-list-view   | Swipe éditer/supprimer sur les cartes |
 | expo-file-system               | Lecture/écriture fichiers CSV         |
 | @expo/vector-icons             | Icônes de la tab bar                  |
@@ -178,6 +187,8 @@ eas build --platform ios
 
 > Le `projectId` EAS est déjà configuré dans `app.json`.
 
+> 💡 Projet visible sur [expo.dev](https://expo.dev/accounts/toto3529/projects/appli-res-arcana)
+
 > 💡 Pour installer l'APK sur ton téléphone : télécharge le fichier `.apk` généré par EAS et envoie-le sur ton téléphone via câble USB ou Google Drive. Active **"Sources inconnues"** dans les paramètres Android si nécessaire.
 
 ---
@@ -195,6 +206,14 @@ pnpm start --clear
 ```bash
 pnpm install
 ```
+
+**Après avoir ajouté une dépendance avec pnpm**
+
+> Le build EAS nécessite un `package-lock.json` synchronisé. Après chaque `pnpm install`, regénère-le avec :
+>
+> ```bash
+> npm install --legacy-peer-deps
+> ```
 
 **L'émulateur plante au lancement depuis VSCode**
 
